@@ -17,7 +17,7 @@
     body {
       background-color: #f4f6f8;
       color: #333;
-      padding-bottom: 90px;
+      padding-bottom: 110px; /* 하단 여백을 넓혀서 메뉴바가 위로 올라오도록 조정 */
       overflow-x: hidden;
     }
 
@@ -395,16 +395,22 @@
       color: #9ca3af;
     }
 
+    /* 하단 메뉴바를 위로 살짝 띄워서 터치하기 쉽게 개선 */
     .bottom-nav {
       position: fixed;
-      bottom: 0; left: 0; right: 0;
+      bottom: 16px; 
+      left: 12px; 
+      right: 12px;
+      max-width: 576px;
+      margin: 0 auto;
       background-color: #ffffff;
-      border-top: 1px solid #e5e7eb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
       display: flex;
       justify-content: space-around;
-      padding: 12px 0 16px 0;
+      padding: 10px 0;
       z-index: 100;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     .nav-item {
