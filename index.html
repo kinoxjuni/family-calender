@@ -302,9 +302,6 @@
     .btn-submit { background-color: #2563eb; color: white; }
 
     .event-manage-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       background: #f9fafb;
       padding: 8px;
       border-radius: 6px;
@@ -313,16 +310,15 @@
       font-size: 12px;
     }
 
-    .event-info {
+    .event-manage-row {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 6px;
-      overflow: hidden;
     }
 
     .event-controls {
       display: flex;
-      gap: 4px;
+      gap: 3px;
     }
 
     .event-controls button {
@@ -335,6 +331,7 @@
       font-weight: bold;
     }
 
+    .btn-edit { background-color: #dbeafe !important; color: #1d4ed8; }
     .btn-del { background-color: #fee2e2 !important; color: #dc2626; }
 
     .bottom-nav {
@@ -436,3 +433,260 @@
         <button class="btn-cancel" onclick="closeModal('eventModal')">취소</button>
         <button class="btn-submit" onclick="saveEvent()">등록</button>
       </div>
+    </div>
+  </div>
+
+  <div id="manageModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 id="manageModalTitle">일정 관리</h3>
+      <div id="eventManageList" style="margin-bottom: 12px; max-height: 250px; overflow-y: auto;">
+      </div>
+      <div class="modal-btns">
+        <button class="btn-cancel" style="flex:1;" onclick="closeModal('manageModal')">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="#" class="nav-item active">📅 캘린더</a>
+    <a href="#" class="nav-item">📋 근무/휴가</a>
+    <a href="#" class="nav-item">📢 공지/게시판</a>
+    <a href="#" class="nav-item">⚙️ 설정</a>
+  </nav>
+
+  <script>
+    const users = {
+      dad: { name: '아빠', canEdit: true },
+      mom: { name: '엄마', canEdit: true },
+      jaehyun: { name: '재현', canEdit: false },
+      jaehoon: { name: '재훈', canEdit: false }
+    };
+
+    let currentUser = 'dad';
+
+    function changeUserRole() {
+      const selectedKey = document.getElementById('userSelect').value;
+      currentUser = selectedKey;
+      const user = users[selectedKey];
+      document.getElementById('userName').innerText = user.name;
+      const badge = document.getElementById('userRoleBadge');
+      const addBtn = document.getElementById('addBtn');
+
+      if (user.canEdit) {
+        badge.innerText = '작성 가능';
+        badge.className = 'role-badge role-admin';
+        addBtn.disabled = false;
+        addBtn.innerText = '+ 새 일정 등록하기';
+      } else {
+        badge.innerText = '조회 전용';
+        badge.className = 'role-badge role-member';
+        addBtn.disabled = true;
+        addBtn.innerText = '🔒 아빠/엄마만 일정을 등록할 수 있어요';
+      }
+    }
+
+    let sampleEvents = {
+      "2026-11-02": [{type: "dad", text: "아빠 근무"}],
+      "2026-11-03": [{type: "jaehyun", text: "재현 학원"}],
+      "2026-11-04": [{type: "mom", text: "엄마 모임"}],
+      "2026-11-08": [{type: "dad", text: "아빠 휴가"}],
+      "2026-11-09": [{type: "dad", text: "석근3조"}, {type: "jaehyun", text: "축구교실"}],
+      "2026-11-15": [{type: "jaehoon", text: "유치원 소풍"}],
+    };
+
+    let today = new Date();
+    let currentYear = today.getFullYear();
+    let currentMonth = today.getMonth();
+
+    function renderCalendar(year, month) {
+      const title = document.getElementById('calendarTitle');
+      const daysContainer = document.getElementById('calendarDays');
+      
+      title.innerText = `${year}년 ${month + 1}월`;
+      daysContainer.innerHTML = '';
+
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const lastDay = new Date(year, month + 1, 0).getDate();
+      const prevLastDay = new Date(year, month, 0).getDate();
+
+      let daysHTML = '';
+
+      for (let i = firstDayIndex; i > 0; i--) {
+        const prevDate = prevLastDay - i + 1;
+        daysHTML += `<div class="day-cell other-month"><div class="day-number">${prevDate}</div></div>`;
+      }
+
+      for (let i = 1; i <= lastDay; i++) {
+        const monthStr = String(month + 1).padStart(2, '0');
+        const dayStr = String(i).padStart(2, '0');
+        const dateKey = `${year}-${monthStr}-${dayStr}`;
+        
+        const isToday = (i === today.getDate() && month === today.getMonth() && year === today.getFullYear());
+        const todayClass = isToday ? 'today' : '';
+
+        let eventsHTML = '';
+        if (sampleEvents[dateKey]) {
+          sampleEvents[dateKey].forEach((ev, idx) => {
+            eventsHTML += `<div class="event-badge event-${ev.type}">${ev.text}</div>`;
+          });
+        }
+
+        daysHTML += `
+          <div class="day-cell ${todayClass}" onclick="openManageModal('${dateKey}', ${i})">
+            <div class="day-number">${i}</div>
+            ${eventsHTML}
+          </div>
+        `;
+      }
+
+      const totalCells = firstDayIndex + lastDay;
+      const nextDaysCount = (totalCells % 7 === 0) ? 0 : 7 - (totalCells % 7);
+      for (let i = 1; i <= nextDaysCount; i++) {
+        daysHTML += `<div class="day-cell other-month"><div class="day-number">${i}</div></div>`;
+      }
+
+      daysContainer.innerHTML = daysHTML;
+    }
+
+    function changeMonth(direction) {
+      currentMonth += direction;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      } else if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar(currentYear, currentMonth);
+    }
+
+    function openAddModal() {
+      if (!users[currentUser].canEdit) {
+        alert("아빠와 엄마만 일정을 등록할 수 있습니다!");
+        return;
+      }
+      const mStr = String(currentMonth + 1).padStart(2, '0');
+      document.getElementById('eventDate').value = `${currentYear}-${mStr}-01`;
+      document.getElementById('eventText').value = '';
+      document.getElementById('eventModal').style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+      renderCalendar(currentYear, currentMonth);
+    }
+
+    function saveEvent() {
+      const dateVal = document.getElementById('eventDate').value;
+      const typeVal = document.getElementById('eventType').value;
+      const textVal = document.getElementById('eventText').value.trim();
+
+      if (!dateVal || !textVal) {
+        alert("날짜와 내용을 모두 입력해 주세요!");
+        return;
+      }
+
+      if (!sampleEvents[dateVal]) {
+        sampleEvents[dateVal] = [];
+      }
+
+      sampleEvents[dateVal].push({ type: typeVal, text: textVal });
+      
+      closeModal('eventModal');
+      renderCalendar(currentYear, currentMonth);
+      alert("일정이 성공적으로 등록되었습니다!");
+    }
+
+    let selectedDateKey = '';
+    function openManageModal(dateKey, dayNum) {
+      selectedDateKey = dateKey;
+      document.getElementById('manageModalTitle').innerText = `${currentMonth + 1}월 ${dayNum}일 일정 관리`;
+      renderManageList();
+      document.getElementById('manageModal').style.display = 'flex';
+    }
+
+    function renderManageList() {
+      const listContainer = document.getElementById('eventManageList');
+      const events = sampleEvents[selectedDateKey] || [];
+
+      if (events.length === 0) {
+        listContainer.innerHTML = `<p style="font-size:12px; color:#6b7280; text-align:center; padding: 16px 0;">등록된 일정이 없습니다.</p>`;
+        return;
+      }
+
+      let html = '';
+      events.forEach((ev, index) => {
+        const typeNames = { dad: '아빠', mom: '엄마', jaehyun: '재현', jaehoon: '재훈' };
+        html += `
+          <div class="event-manage-item">
+            <div class="event-manage-row">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span class="event-badge event-${ev.type}" style="display:inline-block; position:static;">${typeNames[ev.type] || ev.type}</span>
+                <span style="font-weight:600; font-size:12px;">${ev.text}</span>
+              </div>
+              <div class="event-controls">
+                <button onclick="moveEvent(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
+                <button onclick="moveEvent(${index}, 1)" ${index === events.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
+                <button class="btn-edit" onclick="editEvent(${index})">수정</button>
+                <button class="btn-del" onclick="deleteEvent(${index})">삭제</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      listContainer.innerHTML = html;
+    }
+
+    function moveEvent(index, direction) {
+      const events = sampleEvents[selectedDateKey];
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= events.length) return;
+
+      const temp = events[index];
+      events[index] = events[targetIndex];
+      events[targetIndex] = temp;
+
+      renderManageList();
+    }
+
+    // 일정 수정 기능
+    function editEvent(index) {
+      if (!users[currentUser].canEdit) {
+        alert("아빠와 엄마만 일정을 수정할 수 있습니다!");
+        return;
+      }
+      const events = sampleEvents[selectedDateKey];
+      const currentText = events[index].text;
+      
+      const newText = prompt("수정할 내용을 입력해 주세요:", currentText);
+      if (newText !== null) {
+        const trimmed = newText.trim();
+        if (trimmed === "") {
+          alert("내용을 입력해 주세요!");
+          return;
+        }
+        events[index].text = trimmed;
+        renderManageList();
+        renderCalendar(currentYear, currentMonth);
+      }
+    }
+
+    function deleteEvent(index) {
+      if (!users[currentUser].canEdit) {
+        alert("아빠와 엄마만 일정을 삭제할 수 있습니다!");
+        return;
+      }
+      if (confirm("이 일정을 삭제하시겠습니까?")) {
+        sampleEvents[selectedDateKey].splice(index, 1);
+        if (sampleEvents[selectedDateKey].length === 0) {
+          delete sampleEvents[selectedDateKey];
+        }
+        renderManageList();
+        renderCalendar(currentYear, currentMonth);
+      }
+    }
+
+    renderCalendar(currentYear, currentMonth);
+  </script>
+</body>
+</html>
