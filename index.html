@@ -17,7 +17,8 @@
     body {
       background-color: #f4f6f8;
       color: #333;
-      padding-bottom: 80px;
+      padding-bottom: 90px; /* 하단 메뉴바 공간 확보 */
+      overflow-x: hidden;
     }
 
     header {
@@ -101,7 +102,7 @@
     .dot-dad { background-color: #3b82f6; }
     .dot-mom { background-color: #ec4899; }
     .dot-jaehyun { background-color: #10b981; }
-    .dot-jaehoon { background-color: #d97706; } /* 재훈 톤다운된 진한 주황 */
+    .dot-jaehoon { background-color: #d97706; }
 
     .calendar-card {
       background-color: #ffffff;
@@ -152,7 +153,6 @@
     .day-name.sun { color: #ef4444; }
     .day-name.sat { color: #3b82f6; }
 
-    /* 캘린더 칸을 핸드폰에서 보기에 훨씬 넉넉하게 확장 */
     .day-cell {
       min-height: 95px;
       border-radius: 6px;
@@ -206,18 +206,11 @@
     .event-dad { background-color: #3b82f6; }
     .event-mom { background-color: #ec4899; }
     .event-jaehyun { background-color: #10b981; }
-    .event-jaehoon { background-color: #d97706; color: #ffffff; } /* 글씨를 흰색으로 변경 */
+    .event-jaehoon { background-color: #d97706; color: #ffffff; }
 
-    .action-bar {
-      position: fixed;
-      bottom: 55px;
-      left: 0;
-      right: 0;
-      padding: 8px 12px;
-      background: linear-gradient(to top, rgba(244,246,248,1) 80%, rgba(244,246,248,0));
-      z-index: 90;
-      max-width: 480px;
-      margin: 0 auto;
+    /* 달력 바로 밑으로 이동한 등록 버튼 */
+    .inline-action-area {
+      margin-bottom: 15px;
     }
 
     .add-event-btn {
@@ -239,7 +232,6 @@
       box-shadow: none;
     }
 
-    /* 팝업 및 화면 전환 영역 */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -336,7 +328,6 @@
     .btn-edit { background-color: #dbeafe !important; color: #1d4ed8; }
     .btn-del { background-color: #fee2e2 !important; color: #dc2626; }
 
-    /* 두 번째 페이지 (아들 공부 스케줄) 스타일 */
     .study-page {
       display: none;
     }
@@ -405,7 +396,7 @@
       color: #9ca3af;
     }
 
-    /* 하단 탭 바 */
+    /* 살짝 위로 올리고 크기를 키운 하단 탭 바 */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -413,15 +404,16 @@
       border-top: 1px solid #e5e7eb;
       display: flex;
       justify-content: space-around;
-      padding: 8px 0;
+      padding: 12px 0 16px 0; /* 위아래 패딩을 늘려 크기 확대 */
       z-index: 100;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
     }
 
     .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-size: 11px;
+      font-size: 12px; /* 글씨 크기 살짝 확대 */
       color: #9ca3af;
       text-decoration: none;
       cursor: pointer;
@@ -429,7 +421,7 @@
 
     .nav-item.active {
       color: #2563eb;
-      font-weight: 600;
+      font-weight: 700;
     }
   </style>
 </head>
@@ -443,19 +435,20 @@
     </div>
   </header>
 
-  <div class="container">
-    <div class="role-toggle-bar">
-      <span>👤 현재 접속자 테스트:</span>
-      <select id="userSelect" onchange="changeUserRole()">
-        <option value="dad">아빠 (작성 권한 O)</option>
-        <option value="mom">엄마 (작성 권한 O)</option>
-        <option value="jaehyun">재현 (조회 전용)</option>
-        <option value="jaehoon">재훈 (조회 전용)</option>
-      </select>
-    </div>
+  <div class="container" id="mainContainer">
 
     <!-- [페이지 1] 메인 캘린더 화면 -->
     <div id="calendarPage">
+      <div class="role-toggle-bar">
+        <span>👤 현재 접속자 테스트:</span>
+        <select id="userSelect" onchange="changeUserRole()">
+          <option value="dad">아빠 (작성 권한 O)</option>
+          <option value="mom">엄마 (작성 권한 O)</option>
+          <option value="jaehyun">재현 (조회 전용)</option>
+          <option value="jaehoon">재훈 (조회 전용)</option>
+        </select>
+      </div>
+
       <div class="legend-card">
         <div class="legend-item"><div class="color-dot dot-dad"></div>아빠</div>
         <div class="legend-item"><div class="color-dot dot-mom"></div>엄마</div>
@@ -481,19 +474,20 @@
         </div>
         <div id="calendarDays" class="calendar-grid" style="margin-top: 4px;"></div>
       </div>
+
+      <!-- 달력 바로 밑으로 이동한 새 일정 등록 버튼 -->
+      <div class="inline-action-area">
+        <button id="addBtn" class="add-event-btn" onclick="openAddModal()">+ 새 일정 등록하기</button>
+      </div>
     </div>
 
     <!-- [페이지 2] 아들 공부 스케줄 화면 -->
     <div id="studyPage" class="study-page">
-      <div id="weekBar" class="week-bar">
-        <!-- 자바스크립트로 월~일 날짜 바 생성 -->
-      </div>
+      <div id="weekBar" class="week-bar"></div>
       
       <div class="study-card">
-        <h3 id="studyDateTitle" style="font-size: 14px; margin-bottom: 10px; color: #1f2937;">11월 9일 공부 스케줄</h3>
-        <div id="studyListContainer">
-          <!-- 10줄 스케줄 리스트 들어갈 자리 -->
-        </div>
+        <h3 id="studyDateTitle" style="font-size: 14px; margin-bottom: 10px; color: #1f2937;">공부 스케줄</h3>
+        <div id="studyListContainer"></div>
       </div>
 
       <div style="padding: 0 4px; margin-top: 10px;">
@@ -501,11 +495,6 @@
       </div>
     </div>
 
-  </div>
-
-  <!-- 캘린더 일정 등록 하단 바 -->
-  <div id="calendarActionBar" class="action-bar">
-    <button id="addBtn" class="add-event-btn" onclick="openAddModal()">+ 새 일정 등록하기</button>
   </div>
 
   <!-- 일정 등록 팝업 -->
@@ -537,8 +526,7 @@
   <div id="manageModal" class="modal-overlay">
     <div class="modal-content">
       <h3 id="manageModalTitle">일정 관리</h3>
-      <div id="eventManageList" style="margin-bottom: 12px; max-height: 250px; overflow-y: auto;">
-      </div>
+      <div id="eventManageList" style="margin-bottom: 12px; max-height: 250px; overflow-y: auto;"></div>
       <div class="modal-btns">
         <button class="btn-cancel" style="flex:1;" onclick="closeModal('manageModal')">닫기</button>
       </div>
@@ -558,7 +546,7 @@
     </div>
   </div>
 
-  <!-- 하단 탭 바 -->
+  <!-- 크기가 커지고 위로 올라온 하단 탭 바 -->
   <nav class="bottom-nav">
     <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 캘린더</a>
     <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들 공부</a>
@@ -604,7 +592,6 @@
       "2026-11-15": [{type: "jaehoon", text: "유치원 소풍"}],
     };
 
-    // 아들 공부 스케줄 샘플 데이터 (날짜별 10줄 기본 구조)
     let studyEvents = {
       "2026-11-09": [
         { text: "영어 단어 10개 암기", done: true },
@@ -624,6 +611,7 @@
     let currentYear = today.getFullYear();
     let currentMonth = today.getMonth();
     let selectedStudyDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    let currentTab = 0;
 
     function renderCalendar(year, month) {
       const title = document.getElementById('calendarTitle');
@@ -687,11 +675,10 @@
       renderCalendar(currentYear, currentMonth);
     }
 
-    // 화면(탭) 전환 함수
     function switchTab(tabIndex) {
+      currentTab = tabIndex;
       const calendarPage = document.getElementById('calendarPage');
       const studyPage = document.getElementById('studyPage');
-      const calendarActionBar = document.getElementById('calendarActionBar');
       const headerTitle = document.getElementById('headerTitle');
 
       for(let i=0; i<4; i++) {
@@ -702,18 +689,15 @@
       if (tabIndex === 0) {
         calendarPage.style.display = 'block';
         studyPage.style.display = 'none';
-        calendarActionBar.style.display = 'block';
         headerTitle.innerText = '가족 스케줄';
       } else if (tabIndex === 1) {
         calendarPage.style.display = 'none';
         studyPage.style.display = 'block';
-        calendarActionBar.style.display = 'none';
         headerTitle.innerText = '아들 공부 스케줄';
         renderStudyPage();
       } else {
         calendarPage.style.display = 'none';
         studyPage.style.display = 'block';
-        calendarActionBar.style.display = 'none';
         headerTitle.innerText = tabIndex === 2 ? '공지사항' : '설정';
         document.getElementById('studyListContainer').innerHTML = `<p style="text-align:center; padding:30px; color:#6b7280; font-size:13px;">준비 중인 페이지입니다.</p>`;
         document.getElementById('weekBar').innerHTML = '';
@@ -721,7 +705,35 @@
       }
     }
 
-    // 아들 공부 페이지 렌더링 (월~일 날짜 바 + 10줄 리스트)
+    // 좌우 스와이프(터치 슬라이드) 기능 구현
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    const mainContainer = document.getElementById('mainContainer');
+    mainContainer.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+
+    mainContainer.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    });
+
+    function handleSwipe() {
+      const threshold = 50; // 최소 슬라이드 거리
+      if (touchEndX < touchStartX - threshold) {
+        // 왼쪽으로 슬라이드 -> 다음 탭 (0번에서 1번으로)
+        if (currentTab < 3) {
+          switchTab(currentTab + 1);
+        }
+      } else if (touchEndX > touchStartX + threshold) {
+        // 오른쪽으로 슬라이드 -> 이전 탭 (1번에서 0번으로)
+        if (currentTab > 0) {
+          switchTab(currentTab - 1);
+        }
+      }
+    }
+
     function renderStudyPage() {
       renderWeekBar();
       renderStudyList();
@@ -730,7 +742,7 @@
     function renderWeekBar() {
       const weekBar = document.getElementById('weekBar');
       let curr = new Date(selectedStudyDate);
-      let dayOfWeek = curr.getDay(); // 0: 일, 1: 월 ...
+      let dayOfWeek = curr.getDay();
       let monday = new Date(curr);
       monday.setDate(curr.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
@@ -767,7 +779,6 @@
       titleEl.innerText = `${selectedStudyDate} 공부 스케줄`;
 
       if (!studyEvents[selectedStudyDate]) {
-        // 기본 10줄 생성
         studyEvents[selectedStudyDate] = [
           { text: "영어 단어 암기", done: false },
           { text: "국어 문제집 풀기", done: false },
@@ -829,133 +840,9 @@
       renderStudyList();
     }
 
-    // 기존 캘린더 모달 함수들
     function openAddModal() {
       if (!users[currentUser].canEdit) {
         alert("아빠와 엄마만 일정을 등록할 수 있습니다!");
         return;
       }
       const mStr = String(currentMonth + 1).padStart(2, '0');
-      document.getElementById('eventDate').value = `${currentYear}-${mStr}-01`;
-      document.getElementById('eventText').value = '';
-      document.getElementById('eventModal').style.display = 'flex';
-    }
-
-    function closeModal(modalId) {
-      document.getElementById(modalId).style.display = 'none';
-      renderCalendar(currentYear, currentMonth);
-    }
-
-    function saveEvent() {
-      const dateVal = document.getElementById('eventDate').value;
-      const typeVal = document.getElementById('eventType').value;
-      const textVal = document.getElementById('eventText').value.trim();
-
-      if (!dateVal || !textVal) {
-        alert("날짜와 내용을 모두 입력해 주세요!");
-        return;
-      }
-
-      if (!sampleEvents[dateVal]) {
-        sampleEvents[dateVal] = [];
-      }
-
-      sampleEvents[dateVal].push({ type: typeVal, text: textVal });
-      closeModal('eventModal');
-      alert("일정이 성공적으로 등록되었습니다!");
-    }
-
-    let selectedDateKey = '';
-    function openManageModal(dateKey, dayNum) {
-      selectedDateKey = dateKey;
-      document.getElementById('manageModalTitle').innerText = `${currentMonth + 1}월 ${dayNum}일 일정 관리`;
-      renderManageList();
-      document.getElementById('manageModal').style.display = 'flex';
-    }
-
-    function renderManageList() {
-      const listContainer = document.getElementById('eventManageList');
-      const events = sampleEvents[selectedDateKey] || [];
-
-      // 해당 날짜의 공부 스케줄도 함께 확인할 수 있도록 연동 표시
-      let studyHtml = '';
-      if (studyEvents[selectedDateKey] && studyEvents[selectedDateKey].length > 0) {
-        studyHtml += `<div style="font-weight:bold; font-size:12px; margin-bottom:4px; color:#2563eb;">📚 아들 공부 스케줄</div>`;
-        studyEvents[selectedDateKey].forEach(s => {
-          studyHtml += `<div style="font-size:11px; padding:2px 0; color:#4b5563;">- ${s.text} (${s.done ? '완료' : '진행중'})</div>`;
-        });
-        studyHtml += `<hr style="margin:8px 0; border:0; border-top:1px solid #e5e7eb;">`;
-      }
-
-      if (events.length === 0 && (!studyEvents[selectedDateKey] || studyEvents[selectedDateKey].length === 0)) {
-        listContainer.innerHTML = studyHtml + `<p style="font-size:12px; color:#6b7280; text-align:center; padding: 10px 0;">등록된 일정이 없습니다.</p>`;
-        return;
-      }
-
-      let html = studyHtml + `<div style="font-weight:bold; font-size:12px; margin-bottom:4px; color:#111827;">📅 가족 일정</div>`;
-      events.forEach((ev, index) => {
-        const typeNames = { dad: '아빠', mom: '엄마', jaehyun: '재현', jaehoon: '재훈' };
-        html += `
-          <div class="event-manage-item">
-            <div class="event-manage-row">
-              <div style="display:flex; align-items:center; gap:6px;">
-                <span class="event-badge event-${ev.type}" style="display:inline-block; position:static;">${typeNames[ev.type] || ev.type}</span>
-                <span style="font-weight:600; font-size:12px;">${ev.text}</span>
-              </div>
-              <div class="event-controls">
-                <button onclick="moveEvent(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
-                <button onclick="moveEvent(${index}, 1)" ${index === events.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
-                <button class="btn-edit" onclick="editEvent(${index})">수정</button>
-                <button class="btn-del" onclick="deleteEvent(${index})">삭제</button>
-              </div>
-            </div>
-          </div>
-        `;
-      });
-      listContainer.innerHTML = html;
-    }
-
-    function moveEvent(index, direction) {
-      const events = sampleEvents[selectedDateKey];
-      const targetIndex = index + direction;
-      if (targetIndex < 0 || targetIndex >= events.length) return;
-
-      const temp = events[index];
-      events[index] = events[targetIndex];
-      events[targetIndex] = temp;
-
-      renderManageList();
-    }
-
-    function editEvent(index) {
-      const events = sampleEvents[selectedDateKey];
-      const currentText = events[index].text;
-      
-      const newText = prompt("수정할 내용을 입력해 주세요:", currentText);
-      if (newText !== null) {
-        const trimmed = newText.trim();
-        if (trimmed === "") {
-          alert("내용을 입력해 주세요!");
-          return;
-        }
-        events[index].text = trimmed;
-        renderManageList();
-        renderCalendar(currentYear, currentMonth);
-      }
-    }
-
-    function deleteEvent(index) {
-      if (confirm("이 일정을 삭제하시겠습니까?")) {
-        sampleEvents[selectedDateKey].splice(index, 1);
-        if (sampleEvents[selectedDateKey].length === 0) {
-          delete sampleEvents[selectedDateKey];
-        }
-        renderManageList();
-        renderCalendar(currentYear, currentMonth);
-      }
-    }
-
-    renderCalendar(currentYear, currentMonth);
-  </script>
-</body>
-</html>
