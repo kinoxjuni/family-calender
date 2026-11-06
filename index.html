@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>우리가족 스케줄 캘린더</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f8;
+      color: #333;
+      padding-bottom: 70px; /* 하단 탭바 공간 확보 */
+    }
+
+    /* 상단 헤더 */
+    header {
+      background-color: #ffffff;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .role-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    .role-admin {
+      background-color: #e0e7ff;
+      color: #3730a3;
+    }
+
+    .role-member {
+      background-color: #f3f4f6;
+      color: #4b5563;
+    }
+
+    /* 메인 컨테이너 */
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* 범례 (가족별 색상 안내) */
+    .legend-card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-dad { background-color: #3b82f6; }   /* 아빠: 파랑 */
+    .dot-mom { background-color: #ec4899; }   /* 엄마: 분홍 */
+    .dot-jaehyun { background-color: #10b981; } /* 재현: 초록 */
+    .dot-jaehoon { background-color: #f59e0b; } /* 재훈: 주황/노랑 */
+
+    /* 달력 카드 */
+    .calendar-card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .calendar-header h2 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px 8px;
+      color: #6b7280;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+
+    .day-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: #9ca3af;
+      padding-bottom: 8px;
+    }
+
+    .day-name.sun { color: #ef4444; }
+    .day-name.sat { color: #3b82f6; }
+
+    .day-cell {
+      min-height: 52px;
+      border-radius: 8px;
+      padding: 4px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #fafafa;
+      font-size: 12px;
+    }
+
+    .day-cell.other-month {
+      opacity: 0.3;
+    }
+
+    .day-cell.today {
+      background-color: #eff6ff;
+      font-weight: bold;
+    }
+
+    .day-number {
+      margin-bottom: 4px;
+    }
+
+    /* 일정 태그 바 */
+    .event-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      margin-top: 2px;
+    }
+
+    .event-dad { background-color: #3b82f6; }
+    .event-mom { background-color: #ec4899; }
+    .event-jaehyun { background-color: #10b981; }
+    .event-jaehoon { background-color: #f59e0b; }
+
+    /* 권한 제어 영역 & 일정 추가 버튼 */
+    .action-area {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .add-event-btn {
+      width: 100%;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+
+    .add-event-btn:disabled {
+      background-color: #d1d5db;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* 권한 테스트 전환용 컨트롤 바 */
+    .role-toggle-bar {
+      background-color: #e5e7eb;
+      padding: 8px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .role-toggle-bar select {
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    /* 하단 네비게이션 탭 바 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 11px;
+      color: #9ca3af;
+      text-decoration: none;
+    }
+
+    .nav-item.active {
+      color: #2563eb;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 헤더 -->
+  <header>
+    <h1>가족 스케줄</h1>
+    <div class="user-profile">
+      <span id="userName">아빠</span>
+      <span id="userRoleBadge" class="role-badge role-admin">작성 가능</span>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- 권한 테스트용 스위처 (개발 및 확인용) -->
+    <div class="role-toggle-bar" style="margin-bottom: 12px;">
+      <span>👤 현재 접속자 테스트:</span>
+      <select id="userSelect" onchange="changeUserRole()">
+        <option value="dad">아빠 (작성 권한 O)</option>
+        <option value="mom">엄마 (작성 권한 O)</option>
+        <option value="jaehyun">재현 (조회 전용 X)</option>
+        <option value="jaehoon">재훈 (조회 전용 X)</option>
+      </select>
+    </div>
+
+    <!-- 범례 영역 (가족 색상 구별) -->
+    <div class="legend-card">
+      <div class="legend-item"><div class="color-dot dot-dad"></div>아빠</div>
+      <div class="legend-item"><div class="color-dot dot-mom"></div>엄마</div>
+      <div class="legend-item"><div class="color-dot dot-jaehyun"></div>재현</div>
+      <div class="legend-item"><div class="color-dot dot-jaehoon"></div>재훈</div>
+    </div>
+
+    <!-- 캘린더 영역 -->
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <button class="nav-btn">&lt;</button>
+        <h2>2026년 11월</h2>
+        <button class="nav-btn">&gt;</button>
+      </div>
+
+      <div class="calendar-grid">
+        <!-- 요일 헤더 -->
+        <div class="day-name sun">일</div>
+        <div class="day-name">월</div>
+        <div class="day-name">화</div>
+        <div class="day-name">수</div>
+        <div class="day-name">목</div>
+        <div class="day-name">금</div>
+        <div class="day-name sat">토</div>
+
+        <!-- 1주차 예시 -->
+        <div class="day-cell sun"><span class="day-number">1</span></div>
+        <div class="day-cell"><span class="day-number">2</span><div class="event-bar event-dad" title="아빠 근무"></div></div>
+        <div class="day-cell"><span class="day-number">3</span><div class="event-bar event-jaehyun" title="재현 학원"></div></div>
+        <div class="day-cell"><span class="day-number">4</span><div class="event-bar event-mom" title="엄마 일정"></div></div>
+        <div class="day-cell"><span class="day-number">5</span><div class="event-bar event-jaehoon" title="재훈 일정"></div></div>
+        <div class="day-cell"><span class="day-number">6</span></div>
+        <div class="day-cell sat"><span class="day-number">7</span></div>
+
+        <!-- 2주차 예시 (오늘 포함) -->
+        <div class="day-cell sun"><span class="day-number">8</span><div class="event-bar event-dad" title="아빠 휴가"></div></div>
+        <div class="day-cell today">
+          <span class="day-number">9</span>
+          <div class="event-bar event-dad"></div>
+          <div class="event-bar event-jaehyun"></div>
+        </div>
+        <div class="day-cell"><span class="day-number">10</span></div>
+        <div class="day-cell"><span class="day-number">11</span><div class="event-bar event-mom"></div></div>
+        <div class="day-cell"><span class="day-number">12</span></div>
+        <div class="day-cell"><span class="day-number">13</span><div class="event-bar event-jaehoon"></div></div>
+        <div class="day-cell sat"><span class="day-number">14</span></div>
+      </div>
+    </div>
+
+    <!-- 버튼 영역 -->
+    <div class="action-area">
+      <button id="addBtn" class="add-event-btn" onclick="openAddModal()">+ 새 일정 등록하기</button>
+    </div>
+
+  </div>
+
+  <!-- 하단 네비게이션 바 -->
+  <nav class="bottom-nav">
+    <a href="#" class="nav-item active">📅 캘린더</a>
+    <a href="#" class="nav-item">📋 근무/휴가</a>
+    <a href="#" class="nav-item">📢 공지/게시판</a>
+    <a href="#" class="nav-item">⚙️ 설정</a>
+  </nav>
+
+  <script>
+    // 현재 선택된 사용자 정보 (아빠, 엄마 = 작성 가능 / 재현, 재훈 = 읽기 전용)
+    const users = {
+      dad: { name: '아빠', canEdit: true },
+      mom: { name: '엄마', canEdit: true },
+      jaehyun: { name: '재현', canEdit: false },
+      jaehoon: { name: '재훈', canEdit: false }
+    };
+
+    function changeUserRole() {
+      const selectedKey = document.getElementById('userSelect').value;
+      const user = users[selectedKey];
+
+      document.getElementById('userName').innerText = user.name;
+      const badge = document.getElementById('userRoleBadge');
+      const addBtn = document.getElementById('addBtn');
+
+      if (user.canEdit) {
+        badge.innerText = '작성 가능';
+        badge.className = 'role-badge role-admin';
+        addBtn.disabled = false;
+        addBtn.innerText = '+ 새 일정 등록하기';
+      } else {
+        badge.innerText = '조회 전용';
+        badge.className = 'role-badge role-member';
+        addBtn.disabled = true;
+        addBtn.innerText = '🔒 아빠/엄마만 일정을 등록할 수 있어요';
+      }
+    }
+
+    function openAddModal() {
+      alert("일정 등록 창을 열어 일정을 추가하는 기능으로 연결될 예정입니다.");
+    }
+  </script>
+</body>
+</html>
