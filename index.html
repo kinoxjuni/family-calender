@@ -17,7 +17,7 @@
     body {
       background-color: #f4f6f8;
       color: #333;
-      padding-bottom: 150px; /* 하단 여백을 훨씬 넉넉하게 주어 메뉴바를 위로 끌어올림 */
+      padding-bottom: 40px; /* 불필요한 하단 여백 대폭 축소 */
       overflow-x: hidden;
     }
 
@@ -209,7 +209,7 @@
     .event-jaehoon { background-color: #d97706; color: #ffffff; }
 
     .inline-action-area {
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
 
     .add-event-btn {
@@ -395,22 +395,18 @@
       color: #9ca3af;
     }
 
-    /* 하단 메뉴바를 눈에 띄게 위로 올림 */
+    /* 하단 메뉴바를 일반 흐름(일정 등록 버튼 바로 아래)에 자연스럽게 배치 */
     .bottom-nav {
-      position: fixed;
-      bottom: 24px; 
-      left: 16px; 
-      right: 16px;
-      max-width: 568px;
-      margin: 0 auto;
+      position: relative;
+      width: 100%;
       background-color: #ffffff;
       border: 1px solid #e5e7eb;
-      border-radius: 14px;
+      border-radius: 12px;
       display: flex;
       justify-content: space-around;
       padding: 12px 0;
-      z-index: 100;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+      margin-top: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
     .nav-item {
@@ -498,6 +494,14 @@
       </div>
     </div>
 
+    <!-- 하단 메뉴바 (버튼 바로 아래 자연스럽게 위치) -->
+    <nav class="bottom-nav">
+      <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 캘린더</a>
+      <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들 공부</a>
+      <a class="nav-item" onclick="switchTab(2)" id="navTab2">📢 공지</a>
+      <a class="nav-item" onclick="switchTab(3)" id="navTab3">⚙️ 설정</a>
+    </nav>
+
   </div>
 
   <div id="eventModal" class="modal-overlay">
@@ -545,13 +549,6 @@
       </div>
     </div>
   </div>
-
-  <nav class="bottom-nav">
-    <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 캘린더</a>
-    <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들 공부</a>
-    <a class="nav-item" onclick="switchTab(2)" id="navTab2">📢 공지</a>
-    <a class="nav-item" onclick="switchTab(3)" id="navTab3">⚙️ 설정</a>
-  </nav>
 
   <script>
     const users = {
@@ -866,7 +863,7 @@
         studyHtml += `<hr style="margin:8px 0; border:0; border-top:1px solid #e5e7eb;">`;
       }
 
-      if (events.length === 0 && (!studyEvents[selectedDateKey] || studyEvents[selectedStudyKey].length === 0)) {
+      if (events.length === 0 && (!studyEvents[selectedDateKey] || studyEvents[selectedDateKey].length === 0)) {
         listContainer.innerHTML = studyHtml + `<p style="font-size:12px; color:#6b7280; text-align:center; padding: 10px 0;">등록된 일정이 없습니다.</p>`;
         return;
       }
