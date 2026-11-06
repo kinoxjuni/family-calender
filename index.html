@@ -14,41 +14,65 @@
       user-select: none;
     }
 
-    body {
+    /* 화면 전체 고정 (위아래 바운스/스크롤 원천 차단) */
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       background-color: #f4f6f8;
       color: #333;
-      padding-bottom: 90px; /* 하단 메뉴바 공간 확보 */
-      overflow-x: hidden;
     }
 
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* 회사 스타일 상단 헤더 */
     header {
       background-color: #ffffff;
-      padding: 12px 16px;
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #e5e7eb;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
     }
 
     header h1 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #111827;
     }
 
-    .user-profile {
+    .header-sub {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .header-right {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
+      gap: 10px;
+      font-size: 11px;
+    }
+
+    .header-menu-link {
+      color: #4b5563;
+      text-decoration: none;
+      font-weight: 500;
     }
 
     .role-badge {
-      padding: 3px 6px;
-      border-radius: 10px;
+      padding: 2px 6px;
+      border-radius: 8px;
       font-weight: 600;
       font-size: 10px;
     }
@@ -56,38 +80,47 @@
     .role-admin { background-color: #e0e7ff; color: #3730a3; }
     .role-member { background-color: #f3f4f6; color: #4b5563; }
 
+    /* 메인 컨테이너 영역 */
     .container {
+      flex: 1;
       max-width: 100%;
+      width: 100%;
       margin: 0 auto;
-      padding: 8px;
+      padding: 6px 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .role-toggle-bar {
       background-color: #e5e7eb;
-      padding: 6px 10px;
-      border-radius: 8px;
+      padding: 4px 8px;
+      border-radius: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 11px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      flex-shrink: 0;
     }
 
     .role-toggle-bar select {
-      padding: 2px 6px;
+      padding: 2px 4px;
       border-radius: 4px;
       border: 1px solid #ccc;
+      font-size: 11px;
     }
 
     .legend-card {
       background-color: #ffffff;
-      border-radius: 10px;
-      padding: 8px;
-      margin-bottom: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      padding: 6px;
+      margin-bottom: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
       display: flex;
       justify-content: space-around;
       align-items: center;
+      flex-shrink: 0;
     }
 
     .legend-item {
@@ -98,39 +131,45 @@
       font-weight: 600;
     }
 
-    .color-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .color-dot { width: 7px; height: 7px; border-radius: 50%; }
     .dot-dad { background-color: #3b82f6; }
     .dot-mom { background-color: #ec4899; }
     .dot-jaehyun { background-color: #10b981; }
     .dot-jaehoon { background-color: #d97706; }
 
+    /* 캘린더 카드를 화면에 꽉 차게 최대 확장 */
     .calendar-card {
       background-color: #ffffff;
-      border-radius: 12px;
+      border-radius: 10px;
       padding: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      margin-bottom: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 6px;
+      overflow: hidden;
     }
 
     .calendar-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       padding: 0 4px;
+      flex-shrink: 0;
     }
 
     .calendar-header h2 {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
     }
 
     .nav-btn {
       background: #f3f4f6;
       border: none;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
-      padding: 5px 10px;
+      padding: 4px 8px;
       border-radius: 6px;
       font-weight: bold;
       color: #374151;
@@ -141,22 +180,31 @@
       grid-template-columns: repeat(7, 1fr);
       gap: 2px;
       text-align: center;
+      flex-shrink: 0;
     }
 
     .day-name {
       font-size: 11px;
       font-weight: 600;
       color: #9ca3af;
-      padding-bottom: 4px;
+      padding-bottom: 2px;
     }
 
     .day-name.sun { color: #ef4444; }
     .day-name.sat { color: #3b82f6; }
 
+    /* 캘린더 날짜 칸들을 남은 공간에 맞춰 최대한 늘림 */
+    #calendarDays {
+      flex: 1;
+      display: grid;
+      grid-template-rows: repeat(5, 1fr);
+      gap: 2px;
+      margin-top: 2px;
+    }
+
     .day-cell {
-      min-height: 95px;
       border-radius: 6px;
-      padding: 3px 2px;
+      padding: 2px;
       display: flex;
       flex-direction: column;
       align-items: stretch;
@@ -164,6 +212,7 @@
       font-size: 11px;
       border: 1px solid #f0f0f0;
       cursor: pointer;
+      overflow: hidden;
     }
 
     .day-cell:active {
@@ -182,19 +231,20 @@
 
     .day-number {
       font-weight: 600;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
       text-align: left;
       padding-left: 2px;
+      font-size: 10px;
     }
 
     .day-cell.sun .day-number { color: #ef4444; }
     .day-cell.sat .day-number { color: #3b82f6; }
 
     .event-badge {
-      font-size: 10px;
-      padding: 2px 4px;
+      font-size: 9px;
+      padding: 1px 3px;
       border-radius: 3px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -208,9 +258,10 @@
     .event-jaehyun { background-color: #10b981; }
     .event-jaehoon { background-color: #d97706; color: #ffffff; }
 
-    /* 달력 바로 밑으로 이동한 등록 버튼 */
+    /* 달력 바로 밑 등록 버튼 */
     .inline-action-area {
-      margin-bottom: 15px;
+      flex-shrink: 0;
+      margin-bottom: 4px;
     }
 
     .add-event-btn {
@@ -218,12 +269,12 @@
       background-color: #2563eb;
       color: white;
       border: none;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 14px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 3px 6px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
     }
 
     .add-event-btn:disabled {
@@ -232,6 +283,7 @@
       box-shadow: none;
     }
 
+    /* 모달 팝업 스타일 */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -330,20 +382,23 @@
 
     .study-page {
       display: none;
+      flex: 1;
+      flex-direction: column;
     }
 
     .week-bar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 4px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+      flex-shrink: 0;
     }
 
     .week-day-btn {
       background-color: #ffffff;
       border: 1px solid #e5e7eb;
       border-radius: 8px;
-      padding: 8px 2px;
+      padding: 6px 2px;
       text-align: center;
       cursor: pointer;
       font-size: 11px;
@@ -358,23 +413,28 @@
 
     .study-card {
       background-color: #ffffff;
-      border-radius: 12px;
-      padding: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      margin-bottom: 12px;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    #studyListContainer {
+      flex: 1;
+      overflow-y: auto;
     }
 
     .study-item-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 0;
+      padding: 6px 0;
       border-bottom: 1px solid #f0f0f0;
       font-size: 13px;
-    }
-
-    .study-item-row:last-child {
-      border-bottom: none;
     }
 
     .study-item-left {
@@ -385,8 +445,8 @@
     }
 
     .study-item-left input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       accent-color: #2563eb;
       cursor: pointer;
     }
@@ -396,56 +456,62 @@
       color: #9ca3af;
     }
 
-    /* 살짝 위로 올리고 크기를 키운 하단 탭 바 */
+    /* 두 번째 사진처럼 맨 밑 하단은 깔끔한 하얀색 배경의 탭 바 */
     .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
       background-color: #ffffff;
       border-top: 1px solid #e5e7eb;
       display: flex;
       justify-content: space-around;
-      padding: 12px 0 16px 0; /* 위아래 패딩을 늘려 크기 확대 */
+      padding: 8px 0 12px 0;
+      flex-shrink: 0;
       z-index: 100;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
     }
 
     .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-size: 12px; /* 글씨 크기 살짝 확대 */
+      font-size: 11px;
       color: #9ca3af;
       text-decoration: none;
       cursor: pointer;
     }
 
     .nav-item.active {
-      color: #2563eb;
+      color: #ef4444; /* 회사 스타일처럼 활성화 탭은 포인트 컬러 */
       font-weight: 700;
     }
   </style>
 </head>
 <body>
 
+  <!-- 회사 스타일 상단 헤더 -->
   <header>
-    <h1 id="headerTitle">가족 스케줄</h1>
-    <div class="user-profile">
-      <span id="userName">아빠</span>
-      <span id="userRoleBadge" class="role-badge role-admin">작성 가능</span>
+    <div class="header-left">
+      <h1 id="headerTitle">가족 스케줄</h1>
+      <span class="header-sub">홈 화면</span>
+    </div>
+    <div class="header-right">
+      <a href="#" class="header-menu-link">알림</a>
+      <a href="#" class="header-menu-link">설정</a>
+      <div>
+        <span id="userName">아빠</span>
+        <span id="userRoleBadge" class="role-badge role-admin">작성 가능</span>
+      </div>
     </div>
   </header>
 
   <div class="container" id="mainContainer">
 
     <!-- [페이지 1] 메인 캘린더 화면 -->
-    <div id="calendarPage">
+    <div id="calendarPage" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
       <div class="role-toggle-bar">
-        <span>👤 현재 접속자 테스트:</span>
+        <span>👤 접속자:</span>
         <select id="userSelect" onchange="changeUserRole()">
-          <option value="dad">아빠 (작성 권한 O)</option>
-          <option value="mom">엄마 (작성 권한 O)</option>
-          <option value="jaehyun">재현 (조회 전용)</option>
-          <option value="jaehoon">재훈 (조회 전용)</option>
+          <option value="dad">아빠 (작성 O)</option>
+          <option value="mom">엄마 (작성 O)</option>
+          <option value="jaehyun">재현 (조회)</option>
+          <option value="jaehoon">재훈 (조회)</option>
         </select>
       </div>
 
@@ -472,10 +538,9 @@
           <div class="day-name">금</div>
           <div class="day-name sat">토</div>
         </div>
-        <div id="calendarDays" class="calendar-grid" style="margin-top: 4px;"></div>
+        <div id="calendarDays"></div>
       </div>
 
-      <!-- 달력 바로 밑으로 이동한 새 일정 등록 버튼 -->
       <div class="inline-action-area">
         <button id="addBtn" class="add-event-btn" onclick="openAddModal()">+ 새 일정 등록하기</button>
       </div>
@@ -486,18 +551,18 @@
       <div id="weekBar" class="week-bar"></div>
       
       <div class="study-card">
-        <h3 id="studyDateTitle" style="font-size: 14px; margin-bottom: 10px; color: #1f2937;">공부 스케줄</h3>
+        <h3 id="studyDateTitle" style="font-size: 13px; margin-bottom: 6px; color: #1f2937; flex-shrink: 0;">공부 스케줄</h3>
         <div id="studyListContainer"></div>
       </div>
 
-      <div style="padding: 0 4px; margin-top: 10px;">
+      <div style="flex-shrink: 0; margin-top: 4px;">
         <button class="add-event-btn" onclick="openStudyAddModal()">+ 공부 일정 등록하기</button>
       </div>
     </div>
 
   </div>
 
-  <!-- 일정 등록 팝업 -->
+  <!-- 모달들 -->
   <div id="eventModal" class="modal-overlay">
     <div class="modal-content">
       <h3>새 일정 등록</h3>
@@ -513,7 +578,7 @@
       </select>
 
       <label>일정 내용</label>
-      <input type="text" id="eventText" placeholder="예: 근무, 학원, 휴가 등">
+      <input type="text" id="eventText" placeholder="예: 근무, 학원 등">
 
       <div class="modal-btns">
         <button class="btn-cancel" onclick="closeModal('eventModal')">취소</button>
@@ -522,7 +587,6 @@
     </div>
   </div>
 
-  <!-- 캘린더 날짜 클릭 관리 팝업 -->
   <div id="manageModal" class="modal-overlay">
     <div class="modal-content">
       <h3 id="manageModalTitle">일정 관리</h3>
@@ -533,12 +597,11 @@
     </div>
   </div>
 
-  <!-- 아들 공부 일정 추가 팝업 -->
   <div id="studyAddModal" class="modal-overlay">
     <div class="modal-content">
       <h3>공부 일정 추가</h3>
       <label>공부 내용</label>
-      <input type="text" id="studyInputText" placeholder="예: 영어 단어 외우기 20개">
+      <input type="text" id="studyInputText" placeholder="예: 영어 단어 외우기">
       <div class="modal-btns">
         <button class="btn-cancel" onclick="closeModal('studyAddModal')">취소</button>
         <button class="btn-submit" onclick="saveStudyItem()">추가</button>
@@ -546,10 +609,10 @@
     </div>
   </div>
 
-  <!-- 크기가 커지고 위로 올라온 하단 탭 바 -->
+  <!-- 맨 밑 하얀색 하단 메뉴바 -->
   <nav class="bottom-nav">
-    <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 캘린더</a>
-    <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들 공부</a>
+    <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 홈</a>
+    <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들공부</a>
     <a class="nav-item" onclick="switchTab(2)" id="navTab2">📢 공지</a>
     <a class="nav-item" onclick="switchTab(3)" id="navTab3">⚙️ 설정</a>
   </nav>
@@ -595,13 +658,13 @@
     let studyEvents = {
       "2026-11-09": [
         { text: "영어 단어 10개 암기", done: true },
-        { text: "국어 독해 문제집 1장 풀기", done: false },
+        { text: "국어 독해 문제집 1장", done: false },
         { text: "수학 연산 2페이지", done: false },
         { text: "한자 쓰기 연습 3번", done: false },
-        { text: "독서 30분 및 일기 쓰기", done: false },
+        { text: "독서 30분 및 일기", done: false },
         { text: "영어 리스닝 듣기", done: false },
         { text: "받아쓰기 복습", done: false },
-        { text: "학교 숙제 확인하기", done: false },
+        { text: "학교 숙제 확인", done: false },
         { text: "학원 숙제 마무리", done: false },
         { text: "책상 정리 정돈", done: false }
       ]
@@ -687,17 +750,17 @@
       document.getElementById(`navTab${tabIndex}`).className = 'nav-item active';
 
       if (tabIndex === 0) {
-        calendarPage.style.display = 'block';
+        calendarPage.style.display = 'flex';
         studyPage.style.display = 'none';
         headerTitle.innerText = '가족 스케줄';
       } else if (tabIndex === 1) {
         calendarPage.style.display = 'none';
-        studyPage.style.display = 'block';
+        studyPage.style.display = 'flex';
         headerTitle.innerText = '아들 공부 스케줄';
         renderStudyPage();
       } else {
         calendarPage.style.display = 'none';
-        studyPage.style.display = 'block';
+        studyPage.style.display = 'flex';
         headerTitle.innerText = tabIndex === 2 ? '공지사항' : '설정';
         document.getElementById('studyListContainer').innerHTML = `<p style="text-align:center; padding:30px; color:#6b7280; font-size:13px;">준비 중인 페이지입니다.</p>`;
         document.getElementById('weekBar').innerHTML = '';
@@ -705,11 +768,11 @@
       }
     }
 
-    // 좌우 스와이프(터치 슬라이드) 기능 구현
+    // 좌우 스와이프 페이지 전환
     let touchStartX = 0;
     let touchEndX = 0;
-
     const mainContainer = document.getElementById('mainContainer');
+
     mainContainer.addEventListener('touchstart', e => {
       touchStartX = e.changedTouches[0].screenX;
     });
@@ -720,17 +783,11 @@
     });
 
     function handleSwipe() {
-      const threshold = 50; // 최소 슬라이드 거리
+      const threshold = 50;
       if (touchEndX < touchStartX - threshold) {
-        // 왼쪽으로 슬라이드 -> 다음 탭 (0번에서 1번으로)
-        if (currentTab < 3) {
-          switchTab(currentTab + 1);
-        }
+        if (currentTab < 3) switchTab(currentTab + 1);
       } else if (touchEndX > touchStartX + threshold) {
-        // 오른쪽으로 슬라이드 -> 이전 탭 (1번에서 0번으로)
-        if (currentTab > 0) {
-          switchTab(currentTab - 1);
-        }
+        if (currentTab > 0) switchTab(currentTab - 1);
       }
     }
 
@@ -760,7 +817,7 @@
         html += `
           <div class="week-day-btn ${activeClass}" onclick="selectStudyDate('${dateKeyStr}')">
             <div>${daysName[i]}</div>
-            <div style="font-size:12px; margin-top:2px;">${d.getDate()}</div>
+            <div style="font-size:11px; margin-top:2px;">${d.getDate()}</div>
           </div>
         `;
       }
