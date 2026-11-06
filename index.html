@@ -14,33 +14,27 @@
       user-select: none;
     }
 
-    /* 모바일 브라우저 위아래 바운스 차단 및 화면 고정 */
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
+    body {
       background-color: #f4f6f8;
       color: #333;
-      touch-action: pan-x;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
+      padding-bottom: 90px;
+      overflow-x: hidden;
     }
 
     header {
       background-color: #ffffff;
-      padding: 10px 14px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #e5e7eb;
-      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     header h1 {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       color: #111827;
     }
@@ -63,45 +57,37 @@
     .role-member { background-color: #f3f4f6; color: #4b5563; }
 
     .container {
-      flex: 1;
-      max-width: 600px;
-      width: 100%;
+      max-width: 600px; /* PC에서 너무 넓게 퍼지지 않고 보기 좋게 제한 */
       margin: 0 auto;
-      padding: 6px 8px;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto; /* 내부 스크롤 허용으로 캘린더 잘림 방지 */
+      padding: 12px;
     }
 
     .role-toggle-bar {
       background-color: #e5e7eb;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 11px;
-      margin-bottom: 6px;
-      flex-shrink: 0;
+      margin-bottom: 10px;
     }
 
     .role-toggle-bar select {
-      padding: 2px 4px;
+      padding: 2px 6px;
       border-radius: 4px;
       border: 1px solid #ccc;
-      font-size: 11px;
     }
 
     .legend-card {
       background-color: #ffffff;
-      border-radius: 8px;
-      padding: 6px;
-      margin-bottom: 6px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      border-radius: 10px;
+      padding: 8px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       display: flex;
       justify-content: space-around;
       align-items: center;
-      flex-shrink: 0;
     }
 
     .legend-item {
@@ -112,7 +98,7 @@
       font-weight: 600;
     }
 
-    .color-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .color-dot { width: 8px; height: 8px; border-radius: 50%; }
     .dot-dad { background-color: #3b82f6; }
     .dot-mom { background-color: #ec4899; }
     .dot-jaehyun { background-color: #10b981; }
@@ -120,31 +106,31 @@
 
     .calendar-card {
       background-color: #ffffff;
-      border-radius: 10px;
-      padding: 8px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-      margin-bottom: 6px;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 10px;
     }
 
     .calendar-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
       padding: 0 4px;
     }
 
     .calendar-header h2 {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
     }
 
     .nav-btn {
       background: #f3f4f6;
       border: none;
-      font-size: 12px;
+      font-size: 13px;
       cursor: pointer;
-      padding: 4px 8px;
+      padding: 5px 10px;
       border-radius: 6px;
       font-weight: bold;
       color: #374151;
@@ -153,7 +139,7 @@
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 2px;
+      gap: 3px;
       text-align: center;
     }
 
@@ -161,17 +147,17 @@
       font-size: 11px;
       font-weight: 600;
       color: #9ca3af;
-      padding-bottom: 4px;
+      padding-bottom: 6px;
     }
 
     .day-name.sun { color: #ef4444; }
     .day-name.sat { color: #3b82f6; }
 
-    /* 캘린더 칸이 충분히 넉넉하게 보이도록 설정 */
+    /* 캘린더 칸 높이를 안정적인 비율로 설정 (찌그러짐 방지) */
     .day-cell {
-      min-height: 85px;
+      min-height: 95px;
       border-radius: 6px;
-      padding: 3px 2px;
+      padding: 4px 3px;
       display: flex;
       flex-direction: column;
       align-items: stretch;
@@ -197,7 +183,7 @@
 
     .day-number {
       font-weight: 600;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
       text-align: left;
       padding-left: 2px;
     }
@@ -224,7 +210,7 @@
     .event-jaehoon { background-color: #d97706; color: #ffffff; }
 
     .inline-action-area {
-      margin-bottom: 6px;
+      margin-bottom: 15px;
     }
 
     .add-event-btn {
@@ -232,12 +218,12 @@
       background-color: #2563eb;
       color: white;
       border: none;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 13px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+      box-shadow: 0 3px 6px rgba(37, 99, 235, 0.3);
     }
 
     .add-event-btn:disabled {
@@ -246,34 +232,6 @@
       box-shadow: none;
     }
 
-    /* 하단 탭 바 (+ 새 일정 등록하기 바로 밑에 배치) */
-    .bottom-nav {
-      background-color: #ffffff;
-      border-radius: 8px;
-      border: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 0;
-      margin-bottom: 6px;
-      flex-shrink: 0;
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 11px;
-      color: #9ca3af;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .nav-item.active {
-      color: #2563eb;
-      font-weight: 700;
-    }
-
-    /* 모달 팝업 */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -378,14 +336,14 @@
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 4px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .week-day-btn {
       background-color: #ffffff;
       border: 1px solid #e5e7eb;
       border-radius: 8px;
-      padding: 6px 2px;
+      padding: 8px 2px;
       text-align: center;
       cursor: pointer;
       font-size: 11px;
@@ -400,17 +358,17 @@
 
     .study-card {
       background-color: #ffffff;
-      border-radius: 10px;
-      padding: 10px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-      margin-bottom: 6px;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 12px;
     }
 
     .study-item-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 0;
+      padding: 8px 0;
       border-bottom: 1px solid #f0f0f0;
       font-size: 13px;
     }
@@ -427,8 +385,8 @@
     }
 
     .study-item-left input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       accent-color: #2563eb;
       cursor: pointer;
     }
@@ -436,6 +394,32 @@
     .study-item-left span.completed {
       text-decoration: line-through;
       color: #9ca3af;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background-color: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 11px;
+      color: #9ca3af;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .nav-item.active {
+      color: #2563eb;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -454,12 +438,12 @@
     <!-- [페이지 1] 메인 캘린더 화면 -->
     <div id="calendarPage">
       <div class="role-toggle-bar">
-        <span>👤 접속자 테스트:</span>
+        <span>👤 현재 접속자 테스트:</span>
         <select id="userSelect" onchange="changeUserRole()">
-          <option value="dad">아빠 (작성 O)</option>
-          <option value="mom">엄마 (작성 O)</option>
-          <option value="jaehyun">재현 (조회)</option>
-          <option value="jaehoon">재훈 (조회)</option>
+          <option value="dad">아빠 (작성 권한 O)</option>
+          <option value="mom">엄마 (작성 권한 O)</option>
+          <option value="jaehyun">재현 (조회 전용)</option>
+          <option value="jaehoon">재훈 (조회 전용)</option>
         </select>
       </div>
 
@@ -492,14 +476,6 @@
       <div class="inline-action-area">
         <button id="addBtn" class="add-event-btn" onclick="openAddModal()">+ 새 일정 등록하기</button>
       </div>
-
-      <!-- 하단 메뉴 바 (+ 새 일정 등록하기 바로 밑에 배치) -->
-      <nav class="bottom-nav">
-        <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 캘린더</a>
-        <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들 공부</a>
-        <a class="nav-item" onclick="switchTab(2)" id="navTab2">📢 공지</a>
-        <a class="nav-item" onclick="switchTab(3)" id="navTab3">⚙️ 설정</a>
-      </nav>
     </div>
 
     <!-- [페이지 2] 아들 공부 스케줄 화면 -->
@@ -507,20 +483,13 @@
       <div id="weekBar" class="week-bar"></div>
       
       <div class="study-card">
-        <h3 id="studyDateTitle" style="font-size: 13px; margin-bottom: 6px; color: #1f2937;">공부 스케줄</h3>
+        <h3 id="studyDateTitle" style="font-size: 14px; margin-bottom: 10px; color: #1f2937;">공부 스케줄</h3>
         <div id="studyListContainer"></div>
       </div>
 
-      <div style="margin-bottom: 6px;">
+      <div style="padding: 0 4px; margin-top: 10px;">
         <button class="add-event-btn" onclick="openStudyAddModal()">+ 공부 일정 등록하기</button>
       </div>
-
-      <nav class="bottom-nav">
-        <a class="nav-item" onclick="switchTab(0)" id="navTab0_s">📅 캘린더</a>
-        <a class="nav-item active" onclick="switchTab(1)" id="navTab1_s">📚 아들 공부</a>
-        <a class="nav-item" onclick="switchTab(2)" id="navTab2_s">📢 공지</a>
-        <a class="nav-item" onclick="switchTab(3)" id="navTab3_s">⚙️ 설정</a>
-      </nav>
     </div>
 
   </div>
@@ -570,6 +539,13 @@
       </div>
     </div>
   </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 캘린더</a>
+    <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들 공부</a>
+    <a class="nav-item" onclick="switchTab(2)" id="navTab2">📢 공지</a>
+    <a class="nav-item" onclick="switchTab(3)" id="navTab3">⚙️ 설정</a>
+  </nav>
 
   <script>
     const users = {
@@ -645,7 +621,13 @@
 
       for (let i = firstDayIndex; i > 0; i--) {
         const prevDate = prevLastDay - i + 1;
-        daysHTML += `<div class="day-cell other-month"><div class="day-number">${prevDate}</div></div>`; }  for (let i = 1; i <= lastDay; i++) { const monthStr = String(month + 1).padStart(2, '0'); const dayStr = String(i).padStart(2, '0'); const dateKey = `${year}-${monthStr}-${dayStr}`;
+        daysHTML += `<div class="day-cell other-month"><div class="day-number">${prevDate}</div></div>`;
+      }
+
+      for (let i = 1; i <= lastDay; i++) {
+        const monthStr = String(month + 1).padStart(2, '0');
+        const dayStr = String(i).padStart(2, '0');
+        const dateKey = `${year}-${monthStr}-${dayStr}`;
         
         const isToday = (i === today.getDate() && month === today.getMonth() && year === today.getFullYear());
         const todayClass = isToday ? 'today' : '';
@@ -658,8 +640,9 @@
         }
 
         daysHTML += `
-          <div class="day-cell ${todayClass}" onclick="openManageModal('${dateKey}',${i})">
-            <div class="day-number">${i}</div>${eventsHTML}
+          <div class="day-cell ${todayClass}" onclick="openManageModal('${dateKey}', ${i})">
+            <div class="day-number">${i}</div>
+            ${eventsHTML}
           </div>
         `;
       }
@@ -691,9 +674,11 @@
       const studyPage = document.getElementById('studyPage');
       const headerTitle = document.getElementById('headerTitle');
 
-      // 탭 활성화 상태 동기화
-      const navIds = ['navTab', 'navTab1', 'navTab2', 'navTab3'];
-      // 간단히 처리
+      for(let i=0; i<4; i++) {
+        document.getElementById(`navTab${i}`).className = 'nav-item';
+      }
+      document.getElementById(`navTab${tabIndex}`).className = 'nav-item active';
+
       if (tabIndex === 0) {
         calendarPage.style.display = 'block';
         studyPage.style.display = 'none';
@@ -761,7 +746,7 @@
         html += `
           <div class="week-day-btn ${activeClass}" onclick="selectStudyDate('${dateKeyStr}')">
             <div>${daysName[i]}</div>
-            <div style="font-size:11px; margin-top:2px;">${d.getDate()}</div>
+            <div style="font-size:12px; margin-top:2px;">${d.getDate()}</div>
           </div>
         `;
       }
@@ -915,4 +900,57 @@
               <div class="event-controls">
                 <button onclick="moveEvent(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
                 <button onclick="moveEvent(${index}, 1)" ${index === events.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
-                <button class="btn-edit" onclick="editEvent(${index})">수
+                <button class="btn-edit" onclick="editEvent(${index})">수정</button>
+                <button class="btn-del" onclick="deleteEvent(${index})">삭제</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      listContainer.innerHTML = html;
+    }
+
+    function moveEvent(index, direction) {
+      const events = sampleEvents[selectedDateKey];
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= events.length) return;
+
+      const temp = events[index];
+      events[index] = events[targetIndex];
+      events[targetIndex] = temp;
+
+      renderManageList();
+    }
+
+    function editEvent(index) {
+      const events = sampleEvents[selectedDateKey];
+      const currentText = events[index].text;
+      
+      const newText = prompt("수정할 내용을 입력해 주세요:", currentText);
+      if (newText !== null) {
+        const trimmed = newText.trim();
+        if (trimmed === "") {
+          alert("내용을 입력해 주세요!");
+          return;
+        }
+        events[index].text = trimmed;
+        renderManageList();
+        renderCalendar(currentYear, currentMonth);
+      }
+    }
+
+    function deleteEvent(index) {
+      if (confirm("이 일정을 삭제하시겠습니까?")) {
+        sampleEvents[selectedDateKey].splice(index, 1);
+        if (sampleEvents[selectedDateKey].length === 0) {
+          delete sampleEvents[selectedDateKey];
+        }
+        renderManageList();
+        renderCalendar(currentYear, currentMonth);
+      }
+    }
+
+    renderCalendar(currentYear, currentMonth);
+  </script>
+</body>
+</html>
