@@ -607,12 +607,12 @@
       </div>
     </div>
 
-    <!-- [페이지 1] 재현 공부 화면 -->
+    <!-- [페이지 1] 아들 공부 화면 -->
     <div id="page1" class="page-section">
       <div id="weekBar" class="week-bar"></div>
       
       <div class="card-box">
-        <h3 id="studyDateTitle" class="card-title">재현 공부 스케줄</h3>
+        <h3 id="studyDateTitle" class="card-title">아들 공부 스케줄</h3>
         <div id="studyListContainer"></div>
       </div>
 
@@ -636,7 +636,7 @@
         </div>
       </div>
 
-      <!-- 2. 가족 메모 (수정 기능 포함) -->
+      <!-- 2. 가족 메모 -->
       <div class="card-box">
         <div class="card-title">
           <span>📝 가족 메모</span>
@@ -644,18 +644,17 @@
         </div>
         <div id="shoppingListContainer" style="margin-bottom: 8px;"></div>
         <div style="display: flex; gap: 6px; margin-top: 8px;">
-          <input type="text" id="shoppingInputText" placeholder="예: 당근, 양파, 휴지 등" style="flex:1; padding:8px; border:1px solid #d1d5db; border-radius:6px; font-size:12px;" onkeypress="if(event.key==='Enter') addShoppingItem()">
+          <input type="text" id="shoppingInputText" placeholder="" style="flex:1; padding:8px; border:1px solid #d1d5db; border-radius:6px; font-size:12px;" onkeypress="if(event.key==='Enter') addShoppingItem()">
           <button onclick="addShoppingItem()" style="background:#2563eb; color:white; border:none; padding:8px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">추가</button>
         </div>
       </div>
 
-      <!-- 3. 여행 목적지 & 확정 여행 D-DAY (등록/수정/삭제 버튼 포함) -->
+      <!-- 3. 여행 목적지 & D-DAY -->
       <div class="card-box">
         <div class="card-title">
           <span>✈️ 다음 여행 목적지 & 가고 싶은 곳</span>
         </div>
         
-        <!-- 확정된 여행 D-DAY 배너 -->
         <div style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border: 1px solid #f5d0fe; border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <div style="font-size: 11px; color: #a21caf; font-weight: 700;">🎯 확정된 여행 D-DAY</div>
@@ -675,7 +674,7 @@
         <div id="travelWishListContainer"></div>
 
         <div style="display: flex; gap: 6px; margin-top: 8px;">
-          <input type="text" id="travelInputText" placeholder="예: 강원도 속초 바다 여행" style="flex:1; padding:8px; border:1px solid #d1d5db; border-radius:6px; font-size:12px;" onkeypress="if(event.key==='Enter') addTravelWishItem()">
+          <input type="text" id="travelInputText" placeholder="" style="flex:1; padding:8px; border:1px solid #d1d5db; border-radius:6px; font-size:12px;" onkeypress="if(event.key==='Enter') addTravelWishItem()">
           <button onclick="addTravelWishItem()" style="background:#db2777; color:white; border:none; padding:8px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">등록</button>
         </div>
       </div>
@@ -698,7 +697,7 @@
     <!-- 하단 메뉴바 -->
     <nav class="bottom-nav">
       <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 캘린더</a>
-      <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 재현 공부</a>
+      <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들 공부</a>
       <a class="nav-item" onclick="switchTab(2)" id="navTab2">💬 가족 소통</a>
       <a class="nav-item" onclick="switchTab(3)" id="navTab3">📸 추억 사진</a>
     </nav>
@@ -715,7 +714,7 @@
     <div class="modal-content" onclick="event.stopPropagation()">
       <h3>주차 위치 수정</h3>
       <label>주차 장소 및 구역</label>
-      <input type="text" id="carLocationInput" placeholder="예: 지하 2층 B-15, 현대백화점 B3층 등">
+      <input type="text" id="carLocationInput" placeholder="">
       <div class="modal-btns">
         <button class="btn-cancel" onclick="closeModal('carModal')">취소</button>
         <button class="btn-submit" onclick="saveCarLocation()">저장</button>
@@ -728,7 +727,7 @@
     <div class="modal-content" onclick="event.stopPropagation()">
       <h3>확정된 여행 설정</h3>
       <label>여행 이름</label>
-      <input type="text" id="travelTitleInput" placeholder="예: 제주도 가족 여행">
+      <input type="text" id="travelTitleInput" placeholder="">
       <label>여행 날짜 (디데이 목표일)</label>
       <input type="date" id="travelDateInput">
       <div class="modal-btns">
@@ -746,7 +745,7 @@
       <input type="file" id="photoFileInput" accept="image/*" style="padding: 6px;">
       
       <label>간단한 설명</label>
-      <input type="text" id="photoDescInput" placeholder="예: 주말 가족 바다 여행 🌊">
+      <input type="text" id="photoDescInput" placeholder="">
       
       <div class="modal-btns">
         <button class="btn-cancel" onclick="closeModal('photoModal')">취소</button>
@@ -771,7 +770,7 @@
       </select>
 
       <label>일정 내용</label>
-      <input type="text" id="eventText" placeholder="예: 근무, 학원, 휴가 등">
+      <input type="text" id="eventText" placeholder="">
 
       <div class="modal-btns">
         <button class="btn-cancel" onclick="closeModal('eventModal')">취소</button>
@@ -794,7 +793,7 @@
           <option value="jaehyun">재현</option>
           <option value="jaehoon">재훈</option>
         </select>
-        <input type="text" id="modalAddText" placeholder="일정 내용을 입력하세요" style="width: 100%; padding: 6px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; margin-bottom: 6px;">
+        <input type="text" id="modalAddText" placeholder="" style="width: 100%; padding: 6px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; margin-bottom: 6px;">
         <button onclick="addEventFromManageModal()" style="width: 100%; background-color: #2563eb; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">+ 일정 추가</button>
       </div>
 
@@ -807,9 +806,9 @@
   <!-- 공부 일정 추가 모달 -->
   <div id="studyAddModal" class="modal-overlay" onclick="handleOutsideClick(event, 'studyAddModal')">
     <div class="modal-content" onclick="event.stopPropagation()">
-      <h3>재현 공부 일정 추가</h3>
+      <h3>아들 공부 일정 추가</h3>
       <label>내용</label>
-      <input type="text" id="studyInputText" placeholder="예: 미술학원 15시">
+      <input type="text" id="studyInputText" placeholder="">
       <div class="modal-btns">
         <button class="btn-cancel" onclick="closeModal('studyAddModal')">취소</button>
         <button class="btn-submit" onclick="saveStudyItem()">추가</button>
@@ -865,37 +864,12 @@
       }
     }
 
-    let sampleEvents = {
-      "2026-11-02": [{type: "dad", text: "아빠 근무"}],
-      "2026-11-03": [{type: "jaehyun", text: "재현 학원"}],
-      "2026-11-04": [{type: "mom", text: "엄마 모임"}],
-      "2026-11-08": [{type: "dad", text: "아빠 휴가"}],
-      "2026-11-09": [{type: "dad", text: "석근3조"}]
-    };
-
-    let weeklyStudyTemplate = {
-      0: [],
-      1: [
-        { text: "미술학원 15시", done: false },
-        { text: "수영학원 16시", done: false }
-      ],
-      2: [], 3: [], 4: [], 5: [], 6: []
-    };
-
-    let carLocation = "지하 2층 B-15구역";
-    let shoppingList = [
-      { text: "당근 사오기", done: false },
-      { text: "양파 챙기기", done: false },
-      { text: "화장지 떨어짐", done: true }
-    ];
-    let travelWishList = [
-      { text: "부산 해운대 바다 여행" },
-      { text: "강원도 글램핑 캠핑" }
-    ];
-    let confirmedTravel = {
-      title: "제주도 가족 여행",
-      date: "2026-11-24"
-    };
+    let sampleEvents = {};
+    let weeklyStudyTemplate = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+    let carLocation = "주차 구역 정보 없음";
+    let shoppingList = [];
+    let travelWishList = [];
+    let confirmedTravel = null;
     let photoMemoryList = [];
 
     let today = new Date();
@@ -903,31 +877,30 @@
     let currentMonth = today.getMonth();
     let selectedStudyDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-    // Firebase에서 데이터 불러오기
-    function loadDataFromFirebase() {
-      db.collection("familyApp").doc("data").get().then((doc) => {
+    // Firebase 실시간 리스너 (onSnapshot 사용으로 껐다 켜도 데이터 자동 동기화 유지)
+    function listenFirebaseData() {
+      db.collection("familyApp").doc("data").onSnapshot((doc) => {
         if (doc.exists) {
           const data = doc.data();
-          if (data.carLocation) carLocation = data.carLocation;
-          if (data.shoppingList) shoppingList = data.shoppingList;
-          if (data.travelWishList) travelWishList = data.travelWishList;
+          if (data.carLocation !== undefined) carLocation = data.carLocation;
+          if (data.shoppingList !== undefined) shoppingList = data.shoppingList;
+          if (data.travelWishList !== undefined) travelWishList = data.travelWishList;
           if (data.confirmedTravel !== undefined) confirmedTravel = data.confirmedTravel;
-          if (data.photoMemoryList) photoMemoryList = data.photoMemoryList;
-          if (data.sampleEvents) sampleEvents = data.sampleEvents;
-          if (data.weeklyStudyTemplate) weeklyStudyTemplate = data.weeklyStudyTemplate;
+          if (data.photoMemoryList !== undefined) photoMemoryList = data.photoMemoryList;
+          if (data.sampleEvents !== undefined) sampleEvents = data.sampleEvents;
+          if (data.weeklyStudyTemplate !== undefined) weeklyStudyTemplate = data.weeklyStudyTemplate;
+
+          renderCalendar(currentYear, currentMonth);
+          renderCommunicationPage();
+          renderStudyList();
+          renderPhotoPage();
         }
-        renderCalendar(currentYear, currentMonth);
-        renderCommunicationPage();
-        renderStudyList();
-      }).catch((error) => {
-        console.log("데이터 로드 실패:", error);
-        renderCalendar(currentYear, currentMonth);
-        renderCommunicationPage();
-        renderStudyList();
+      }, (error) => {
+        console.log("실시간 데이터 연결 오류:", error);
       });
     }
 
-    // Firebase에 데이터 저장하기
+    // Firebase에 데이터 즉시 저장
     function saveDataToFirebase() {
       db.collection("familyApp").doc("data").set({
         carLocation: carLocation,
@@ -1028,7 +1001,7 @@
       if (tabIndex === 0) {
         headerTitle.innerText = '가족 스케줄';
       } else if (tabIndex === 1) {
-        headerTitle.innerText = '재현 공부 스케줄';
+        headerTitle.innerText = '아들 공부 스케줄';
         renderStudyPage();
       } else if (tabIndex === 2) {
         headerTitle.innerText = '가족 소통 공간';
@@ -1042,7 +1015,6 @@
     function renderCommunicationPage() {
       document.getElementById('carLocationText').innerText = carLocation;
 
-      // 1. 가족 메모 렌더링
       const shopContainer = document.getElementById('shoppingListContainer');
       let shopHtml = '';
       if (shoppingList.length === 0) {
@@ -1067,12 +1039,10 @@
       }
       shopContainer.innerHTML = shopHtml;
 
-      // 2. 확정 여행 D-DAY 렌더링
       if (confirmedTravel && confirmedTravel.title) {
         document.getElementById('confirmedTravelTitle').innerText = confirmedTravel.title;
         document.getElementById('confirmedTravelDate').innerText = `목표일: ${confirmedTravel.date}`;
         
-        // D-DAY 계산
         const todayDate = new Date();
         todayDate.setHours(0,0,0,0);
         const targetDate = new Date(confirmedTravel.date);
@@ -1088,7 +1058,6 @@
         document.getElementById('confirmedTravelDday').innerText = "D-?";
       }
 
-      // 3. 여행 위시리스트 렌더링 (수정 기능 추가)
       const travelContainer = document.getElementById('travelWishListContainer');
       let travelHtml = '';
       if (travelWishList.length === 0) {
@@ -1156,10 +1125,8 @@
       carLocation = val;
       closeModal('carModal');
       saveDataToFirebase();
-      renderCommunicationPage();
     }
 
-    // 확정된 여행 모달 제어
     function openTravelModal() {
       document.getElementById('travelTitleInput').value = confirmedTravel ? confirmedTravel.title : "";
       document.getElementById('travelDateInput').value = confirmedTravel ? confirmedTravel.date : "";
@@ -1176,14 +1143,12 @@
       confirmedTravel = { title: titleVal, date: dateVal };
       closeModal('travelModal');
       saveDataToFirebase();
-      renderCommunicationPage();
     }
 
     function deleteConfirmedTravel() {
       if (confirm("확정된 여행 일정을 삭제하시겠습니까?")) {
         confirmedTravel = null;
         saveDataToFirebase();
-        renderCommunicationPage();
       }
     }
 
@@ -1193,6 +1158,7 @@
       document.getElementById('photoModal').style.display = 'flex';
     }
 
+    // 사진 안정적 압축 후 Firebase 저장
     function savePhotoItem() {
       const fileInput = document.getElementById('photoFileInput');
       const descInput = document.getElementById('photoDescInput');
@@ -1201,17 +1167,45 @@
       if (fileInput.files && fileInput.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          const now = new Date();
-          const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
-          
-          photoMemoryList.unshift({
-            url: e.target.result,
-            desc: descVal,
-            date: dateStr
-          });
-          closeModal('photoModal');
-          saveDataToFirebase();
-          renderPhotoPage();
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 600;
+            const MAX_HEIGHT = 600;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+            
+            photoMemoryList.unshift({
+              url: compressedDataUrl,
+              desc: descVal,
+              date: dateStr
+            });
+            closeModal('photoModal');
+            saveDataToFirebase();
+          };
         };
         reader.readAsDataURL(fileInput.files[0]);
       } else {
@@ -1223,7 +1217,6 @@
       if (confirm("이 추억 사진을 삭제하시겠습니까?")) {
         photoMemoryList.splice(index, 1);
         saveDataToFirebase();
-        renderPhotoPage();
       }
     }
 
@@ -1234,7 +1227,6 @@
       shoppingList.push({ text: val, done: false });
       input.value = '';
       saveDataToFirebase();
-      renderCommunicationPage();
     }
 
     function editShoppingItem(index) {
@@ -1245,7 +1237,6 @@
         if (trimmed) {
           shoppingList[index].text = trimmed;
           saveDataToFirebase();
-          renderCommunicationPage();
         }
       }
     }
@@ -1253,13 +1244,11 @@
     function toggleShoppingDone(index) {
       shoppingList[index].done = !shoppingList[index].done;
       saveDataToFirebase();
-      renderCommunicationPage();
     }
 
     function deleteShoppingItem(index) {
       shoppingList.splice(index, 1);
       saveDataToFirebase();
-      renderCommunicationPage();
     }
 
     function addTravelWishItem() {
@@ -1269,7 +1258,6 @@
       travelWishList.push({ text: val });
       input.value = '';
       saveDataToFirebase();
-      renderCommunicationPage();
     }
 
     function editTravelWishItem(index) {
@@ -1280,7 +1268,6 @@
         if (trimmed) {
           travelWishList[index].text = trimmed;
           saveDataToFirebase();
-          renderCommunicationPage();
         }
       }
     }
@@ -1288,7 +1275,6 @@
     function deleteTravelWishItem(index) {
       travelWishList.splice(index, 1);
       saveDataToFirebase();
-      renderCommunicationPage();
     }
 
     function renderStudyPage() {
@@ -1338,7 +1324,7 @@
       let dObj = new Date(selectedStudyDate);
       let dayOfWeek = dObj.getDay();
 
-      let items = weeklyStudyTemplate[dayOfWeek];
+      let items = weeklyStudyTemplate[dayOfWeek] || [];
       let html = '';
 
       if (items.length === 0) {
@@ -1367,7 +1353,6 @@
     function toggleStudyDone(dayOfWeek, index) {
       weeklyStudyTemplate[dayOfWeek][index].done = !weeklyStudyTemplate[dayOfWeek][index].done;
       saveDataToFirebase();
-      renderStudyList();
     }
 
     function openStudyAddModal() {
@@ -1384,21 +1369,20 @@
       let dObj = new Date(selectedStudyDate);
       let dayOfWeek = dObj.getDay();
 
+      if(!weeklyStudyTemplate[dayOfWeek]) weeklyStudyTemplate[dayOfWeek] = [];
       weeklyStudyTemplate[dayOfWeek].push({ text: text, done: false });
       closeModal('studyAddModal');
       saveDataToFirebase();
-      renderStudyList();
     }
 
     function editStudyItem(dayOfWeek, index) {
       const currentText = weeklyStudyTemplate[dayOfWeek][index].text;
-      const newText = prompt("재현 공부 일정 수정:", currentText);
+      const newText = prompt("아들 공부 일정 수정:", currentText);
       if (newText !== null) {
         const trimmed = newText.trim();
         if (trimmed) {
           weeklyStudyTemplate[dayOfWeek][index].text = trimmed;
           saveDataToFirebase();
-          renderStudyList();
         }
       }
     }
@@ -1406,7 +1390,6 @@
     function deleteStudyItem(dayOfWeek, index) {
       weeklyStudyTemplate[dayOfWeek].splice(index, 1);
       saveDataToFirebase();
-      renderStudyList();
     }
 
     function openAddModal() {
@@ -1517,7 +1500,6 @@
       document.getElementById('modalAddText').value = '';
       saveDataToFirebase();
       renderManageList(parseInt(selectedDateKey.split('-')[2]));
-      renderCalendar(currentYear, currentMonth);
     }
 
     function moveEvent(index, direction) {
@@ -1547,7 +1529,6 @@
         events[index].text = trimmed;
         saveDataToFirebase();
         renderManageList(parseInt(selectedDateKey.split('-')[2]));
-        renderCalendar(currentYear, currentMonth);
       }
     }
 
@@ -1559,12 +1540,11 @@
         }
         saveDataToFirebase();
         renderManageList(parseInt(selectedDateKey.split('-')[2]));
-        renderCalendar(currentYear, currentMonth);
       }
     }
 
-    // 초기 실행 시 Firebase에서 데이터 로드
-    loadDataFromFirebase();
+    // 앱 시작 시 실시간 데이터 연결
+    listenFirebaseData();
   </script>
 </body>
 </html>
