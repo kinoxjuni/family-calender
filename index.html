@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>우리 가족 스케줄 & 소통 공간</title>
+  
+  <!-- Firebase SDK 로드 -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -417,7 +422,6 @@
       color: #be185d;
     }
 
-    /* 추억 사진 갤러리 카드 스타일 */
     .photo-card-item {
       background: #ffffff;
       border: 1px solid #e5e7eb;
@@ -620,7 +624,7 @@
         </div>
       </div>
 
-      <!-- 3. 복구된 여행 목적지 & D-DAY & 가고 싶은 곳 -->
+      <!-- 3. 여행 목적지 & D-DAY -->
       <div class="card-box">
         <div class="card-title">
           <span>✈️ 다음 여행 목적지 & 가고 싶은 곳</span>
@@ -652,13 +656,13 @@
           <span>📸 우리 가족 추억 사진첩</span>
           <button onclick="openPhotoModal()" style="background:#fce7f3; color:#be185d; border:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">+ 사진 올리기</button>
         </div>
-        <div style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">가족 여행이나 특별했던 그날의 순관을 올려 함께 공유해보세요!</div>
+        <div style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">가족 여행이나 특별했던 그날의 순간을 올려 함께 공유해보세요!</div>
         
         <div id="photoGalleryContainer"></div>
       </div>
     </div>
 
-    <!-- 하단 메뉴바 (4번째 칸 = 추억 사진) -->
+    <!-- 하단 메뉴바 -->
     <nav class="bottom-nav">
       <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 캘린더</a>
       <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 재현 공부</a>
@@ -761,6 +765,18 @@
   </div>
 
   <script>
+    // Firebase 초기화 및 연결
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlNR07Qv8ARHmgUQTStEp_LEeUuFWrLVw",
+      authDomain: "family-calender-835c0.firebaseapp.com",
+      projectId: "family-calender-835c0",
+      storageBucket: "family-calender-835c0.firebasestorage.app",
+      messagingSenderId: "694641804029",
+      appId: "1:694641804029:web:960b13a2f4e2e5fcf6f494"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     const users = {
       dad: { name: '아빠', canEdit: true },
       mom: { name: '엄마', canEdit: true },
@@ -829,6 +845,39 @@
     let currentYear = today.getFullYear();
     let currentMonth = today.getMonth();
     let selectedStudyDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    // Firebase에서 데이터 불러오기
+    function loadDataFromFirebase() {
+      db.collection("familyApp").doc("data").get().then((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data.carLocation) carLocation = data.carLocation;
+          if (data.shoppingList) shoppingList = data.shoppingList;
+          if (data.travelWishList) travelWishList = data.travelWishList;
+          if (data.photoMemoryList) photoMemoryList = data.photoMemoryList;
+          if (data.sampleEvents) sampleEvents = data.sampleEvents;
+        }
+        renderCalendar(currentYear, currentMonth);
+        renderCommunicationPage();
+      }).catch((error) => {
+        console.log("데이터 로드 실패:", error);
+        renderCalendar(currentYear, currentMonth);
+        renderCommunicationPage();
+      });
+    }
+
+    // Firebase에 데이터 저장하기
+    function saveDataToFirebase() {
+      db.collection("familyApp").doc("data").set({
+        carLocation: carLocation,
+        shoppingList: shoppingList,
+        travelWishList: travelWishList,
+        photoMemoryList: photoMemoryList,
+        sampleEvents: sampleEvents
+      }).catch((error) => {
+        console.log("데이터 저장 실패:", error);
+      });
+    }
 
     function handleOutsideClick(event, modalId) {
       closeModal(modalId);
@@ -930,7 +979,6 @@
     function renderCommunicationPage() {
       document.getElementById('carLocationText').innerText = carLocation;
 
-      // 가족 메모 리스트
       const shopContainer = document.getElementById('shoppingListContainer');
       let shopHtml = '';
       if (shoppingList.length === 0) {
@@ -952,7 +1000,6 @@
       }
       shopContainer.innerHTML = shopHtml;
 
-      // 여행 위시리스트 복구
       const travelContainer = document.getElementById('travelWishListContainer');
       let travelHtml = '';
       if (travelWishList.length === 0) {
@@ -970,7 +1017,6 @@
       travelContainer.innerHTML = travelHtml;
     }
 
-    // 📸 추억 사진 페이지 전용 렌더링
     function renderPhotoPage() {
       const photoContainer = document.getElementById('photoGalleryContainer');
       let photoHtml = '';
@@ -1008,6 +1054,7 @@
       }
       carLocation = val;
       closeModal('carModal');
+      saveDataToFirebase();
       renderCommunicationPage();
     }
 
@@ -1034,6 +1081,7 @@
             date: dateStr
           });
           closeModal('photoModal');
+          saveDataToFirebase();
           renderPhotoPage();
         };
         reader.readAsDataURL(fileInput.files[0]);
@@ -1045,6 +1093,7 @@
     function deletePhotoItem(index) {
       if (confirm("이 추억 사진을 삭제하시겠습니까?")) {
         photoMemoryList.splice(index, 1);
+        saveDataToFirebase();
         renderPhotoPage();
       }
     }
@@ -1055,16 +1104,19 @@
       if (!val) return;
       shoppingList.push({ text: val, done: false });
       input.value = '';
+      saveDataToFirebase();
       renderCommunicationPage();
     }
 
     function toggleShoppingDone(index) {
       shoppingList[index].done = !shoppingList[index].done;
+      saveDataToFirebase();
       renderCommunicationPage();
     }
 
     function deleteShoppingItem(index) {
       shoppingList.splice(index, 1);
+      saveDataToFirebase();
       renderCommunicationPage();
     }
 
@@ -1074,11 +1126,13 @@
       if (!val) return;
       travelWishList.push({ text: val });
       input.value = '';
+      saveDataToFirebase();
       renderCommunicationPage();
     }
 
     function deleteTravelWishItem(index) {
       travelWishList.splice(index, 1);
+      saveDataToFirebase();
       renderCommunicationPage();
     }
 
@@ -1154,6 +1208,7 @@
 
     function toggleStudyDone(dayOfWeek, index) {
       weeklyStudyTemplate[dayOfWeek][index].done = !weeklyStudyTemplate[dayOfWeek][index].done;
+      saveDataToFirebase();
       renderStudyList();
     }
 
@@ -1173,11 +1228,13 @@
 
       weeklyStudyTemplate[dayOfWeek].push({ text: text, done: false });
       closeModal('studyAddModal');
+      saveDataToFirebase();
       renderStudyList();
     }
 
     function deleteStudyItem(dayOfWeek, index) {
       weeklyStudyTemplate[dayOfWeek].splice(index, 1);
+      saveDataToFirebase();
       renderStudyList();
     }
 
@@ -1216,6 +1273,7 @@
 
       sampleEvents[dateVal].push({ type: typeVal, text: textVal });
       closeModal('eventModal');
+      saveDataToFirebase();
       alert("일정이 성공적으로 등록되었습니다!");
     }
 
@@ -1286,6 +1344,7 @@
 
       sampleEvents[selectedDateKey].push({ type: typeVal, text: textVal });
       document.getElementById('modalAddText').value = '';
+      saveDataToFirebase();
       renderManageList(parseInt(selectedDateKey.split('-')[2]));
       renderCalendar(currentYear, currentMonth);
     }
@@ -1299,6 +1358,7 @@
       events[index] = events[targetIndex];
       events[targetIndex] = temp;
 
+      saveDataToFirebase();
       renderManageList(parseInt(selectedDateKey.split('-')[2]));
     }
 
@@ -1314,6 +1374,7 @@
           return;
         }
         events[index].text = trimmed;
+        saveDataToFirebase();
         renderManageList(parseInt(selectedDateKey.split('-')[2]));
         renderCalendar(currentYear, currentMonth);
       }
@@ -1325,12 +1386,14 @@
         if (sampleEvents[selectedDateKey].length === 0) {
           delete sampleEvents[selectedDateKey];
         }
+        saveDataToFirebase();
         renderManageList(parseInt(selectedDateKey.split('-')[2]));
         renderCalendar(currentYear, currentMonth);
       }
     }
 
-    renderCalendar(currentYear, currentMonth);
+    // 초기 실행 시 Firebase에서 데이터 로드
+    loadDataFromFirebase();
   </script>
 </body>
 </html>
