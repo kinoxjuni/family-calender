@@ -1170,6 +1170,7 @@
       document.getElementById('photoModal').style.display = 'flex';
     }
 
+    // 화질 대폭 개선 및 안정적 압축 (고해상도 유지)
     function savePhotoItem() {
       const fileInput = document.getElementById('photoFileInput');
       const descInput = document.getElementById('photoDescInput');
@@ -1182,8 +1183,8 @@
           img.src = e.target.result;
           img.onload = function() {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 600;
-            const MAX_HEIGHT = 600;
+            const MAX_WIDTH = 1400;  // 해상도 대폭 상향
+            const MAX_HEIGHT = 1400; // 해상도 대폭 상향
             let width = img.width;
             let height = img.height;
 
@@ -1204,7 +1205,8 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             
-            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+            // 품질을 85%로 높여 선명하게 유지
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
 
             const now = new Date();
             const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
