@@ -436,13 +436,23 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
+    /* 1:1 정사각형 비율 프레임 적용 */
+    .photo-wrapper {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background-color: #000000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
     .photo-card-img {
       width: 100%;
-      max-height: 280px;
+      height: 100%;
       object-fit: contain;
-      background-color: #000;
       display: block;
-      cursor: pointer;
     }
 
     .photo-card-content {
@@ -877,7 +887,7 @@
     let currentMonth = today.getMonth();
     let selectedStudyDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-    // Firebase 실시간 리스너 (onSnapshot 사용으로 껐다 켜도 데이터 자동 동기화 유지)
+    // Firebase 실시간 리스너
     function listenFirebaseData() {
       db.collection("familyApp").doc("data").onSnapshot((doc) => {
         if (doc.exists) {
@@ -1087,7 +1097,9 @@
         photoMemoryList.forEach((photo, index) => {
           photoHtml += `
             <div class="photo-card-item">
-              <img src="${photo.url}" class="photo-card-img" alt="추억 사진" onclick="openImageModal('${photo.url}')">
+              <div class="photo-wrapper" onclick="openImageModal('${photo.url}')">
+                <img src="${photo.url}" class="photo-card-img" alt="추억 사진">
+              </div>
               <div class="photo-card-content">
                 <div style="font-size: 14px; font-weight: 700; color: #1f2937; margin-bottom: 6px;">${photo.desc}</div>
                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #9ca3af;">
@@ -1158,7 +1170,6 @@
       document.getElementById('photoModal').style.display = 'flex';
     }
 
-    // 사진 안정적 압축 후 Firebase 저장
     function savePhotoItem() {
       const fileInput = document.getElementById('photoFileInput');
       const descInput = document.getElementById('photoDescInput');
