@@ -17,7 +17,7 @@
     body {
       background-color: #f4f6f8;
       color: #333;
-      padding-bottom: 40px; /* 불필요한 하단 여백 대폭 축소 */
+      padding-bottom: 40px;
       overflow-x: hidden;
     }
 
@@ -208,6 +208,13 @@
     .event-jaehyun { background-color: #10b981; }
     .event-jaehoon { background-color: #d97706; color: #ffffff; }
 
+    /* 생일 전용 단일 통일 색상 (진한 인디고/네이비 톤) */
+    .event-birthday { 
+      background-color: #4f46e5; 
+      color: #ffffff; 
+      font-weight: 600; 
+    }
+
     .inline-action-area {
       margin-bottom: 12px;
     }
@@ -395,7 +402,6 @@
       color: #9ca3af;
     }
 
-    /* 하단 메뉴바를 일반 흐름(일정 등록 버튼 바로 아래)에 자연스럽게 배치 */
     .bottom-nav {
       position: relative;
       width: 100%;
@@ -494,7 +500,7 @@
       </div>
     </div>
 
-    <!-- 하단 메뉴바 (버튼 바로 아래 자연스럽게 위치) -->
+    <!-- 하단 메뉴바 -->
     <nav class="bottom-nav">
       <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 캘린더</a>
       <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들 공부</a>
@@ -560,6 +566,14 @@
 
     let currentUser = 'dad';
 
+    // 매년 고정 생일 정보 (동일한 생일 전용 색상 적용)
+    const familyBirthdays = [
+      { month: 9, day: 22, text: "🎂 아빠 생일" },
+      { month: 6, day: 17, text: "🎂 엄마 생일" },
+      { month: 12, day: 21, text: "🎂 재현 생일" },
+      { month: 11, day: 18, text: "🎂 재훈 생일" }
+    ];
+
     function changeUserRole() {
       const selectedKey = document.getElementById('userSelect').value;
       currentUser = selectedKey;
@@ -584,8 +598,7 @@
       "2026-11-03": [{type: "jaehyun", text: "재현 학원"}],
       "2026-11-04": [{type: "mom", text: "엄마 모임"}],
       "2026-11-08": [{type: "dad", text: "아빠 휴가"}],
-      "2026-11-09": [{type: "dad", text: "석근3조"}, {type: "jaehoon", text: "한글 공부"}],
-      "2026-11-15": [{type: "jaehoon", text: "유치원 소풍"}],
+      "2026-11-09": [{type: "dad", text: "석근3조"}]
     };
 
     let studyEvents = {
@@ -636,6 +649,15 @@
         const todayClass = isToday ? 'today' : '';
 
         let eventsHTML = '';
+
+        // 1. 매년 고정 생일 표시 (동일한 생일 전용 색상 적용)
+        familyBirthdays.forEach(b => {
+          if (b.month === (month + 1) && b.day === i) {
+            eventsHTML += `<div class="event-badge event-birthday">${b.text}</div>`;
+          }
+        });
+
+        // 2. 일반 일정 표시
         if (sampleEvents[dateKey]) {
           sampleEvents[dateKey].forEach((ev) => {
             eventsHTML += `<div class="event-badge event-${ev.type}">${ev.text}</div>`;
@@ -846,13 +868,20 @@
     function openManageModal(dateKey, dayNum) {
       selectedDateKey = dateKey;
       document.getElementById('manageModalTitle').innerText = `${currentMonth + 1}월 ${dayNum}일 일정 관리`;
-      renderManageList();
+      renderManageList(dayNum);
       document.getElementById('manageModal').style.display = 'flex';
     }
 
-    function renderManageList() {
+    function renderManageList(dayNum) {
       const listContainer = document.getElementById('eventManageList');
       const events = sampleEvents[selectedDateKey] || [];
+
+      let birthdayHtml = '';
+      familyBirthdays.forEach(b => {
+        if (b.month === (currentMonth + 1) && b.day === dayNum) {
+          birthdayHtml += `<div style="font-weight:bold; font-size:12px; margin-bottom:4px; color:#4f46e5;">🎉 ${b.text} (매년 고정)</div>`;
+        }
+      });
 
       let studyHtml = '';
       if (studyEvents[selectedDateKey] && studyEvents[selectedDateKey].length > 0) {
@@ -863,12 +892,12 @@
         studyHtml += `<hr style="margin:8px 0; border:0; border-top:1px solid #e5e7eb;">`;
       }
 
-      if (events.length === 0 && (!studyEvents[selectedDateKey] || studyEvents[selectedDateKey].length === 0)) {
-        listContainer.innerHTML = studyHtml + `<p style="font-size:12px; color:#6b7280; text-align:center; padding: 10px 0;">등록된 일정이 없습니다.</p>`;
+      if (events.length === 0 && (!studyEvents[selectedDateKey] || studyEvents[selectedDateKey].length === 0) && !birthdayHtml) {
+        listContainer.innerHTML = `<p style="font-size:12px; color:#6b7280; text-align:center; padding: 10px 0;">등록된 일정이 없습니다.</p>`;
         return;
       }
 
-      let html = studyHtml + `<div style="font-weight:bold; font-size:12px; margin-bottom:4px; color:#111827;">📅 가족 일정</div>`;
+      let html = birthdayHtml + studyHtml + `<div style="font-weight:bold; font-size:12px; margin-bottom:4px; color:#111827;">📅 가족 일정</div>`;
       events.forEach((ev, index) => {
         const typeNames = { dad: '아빠', mom: '엄마', jaehyun: '재현', jaehoon: '재훈' };
         html += `
@@ -900,7 +929,7 @@
       events[index] = events[targetIndex];
       events[targetIndex] = temp;
 
-      renderManageList();
+      renderManageList(parseInt(selectedDateKey.split('-')[2]));
     }
 
     function editEvent(index) {
@@ -915,7 +944,7 @@
           return;
         }
         events[index].text = trimmed;
-        renderManageList();
+        renderManageList(parseInt(selectedDateKey.split('-')[2]));
         renderCalendar(currentYear, currentMonth);
       }
     }
@@ -926,7 +955,7 @@
         if (sampleEvents[selectedDateKey].length === 0) {
           delete sampleEvents[selectedDateKey];
         }
-        renderManageList();
+        renderManageList(parseInt(selectedDateKey.split('-')[2]));
         renderCalendar(currentYear, currentMonth);
       }
     }
