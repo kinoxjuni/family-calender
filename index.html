@@ -376,7 +376,7 @@
       margin: 4px 0;
     }
 
-    .shopping-item-row {
+    .list-item-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -385,27 +385,32 @@
       font-size: 13px;
     }
 
-    .shopping-item-row:last-child {
+    .list-item-row:last-child {
       border-bottom: none;
     }
 
-    .shopping-left {
+    .list-item-left {
       display: flex;
       align-items: center;
       gap: 8px;
       flex: 1;
     }
 
-    .shopping-left input[type="checkbox"] {
+    .list-item-left input[type="checkbox"] {
       width: 18px;
       height: 18px;
       accent-color: #2563eb;
       cursor: pointer;
     }
 
-    .shopping-left span.completed {
+    .list-item-left span.completed {
       text-decoration: line-through;
       color: #9ca3af;
+    }
+
+    .btn-group-sm {
+      display: flex;
+      gap: 4px;
     }
 
     .travel-memo-item {
@@ -434,12 +439,32 @@
     .photo-card-img {
       width: 100%;
       max-height: 280px;
-      object-fit: cover;
+      object-fit: contain;
+      background-color: #000;
       display: block;
+      cursor: pointer;
     }
 
     .photo-card-content {
       padding: 12px;
+    }
+
+    .image-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+
+    .image-modal-content {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 8px;
     }
 
     .week-bar {
@@ -611,7 +636,7 @@
         </div>
       </div>
 
-      <!-- 2. 가족 메모 -->
+      <!-- 2. 가족 메모 (수정 기능 포함) -->
       <div class="card-box">
         <div class="card-title">
           <span>📝 가족 메모</span>
@@ -624,18 +649,26 @@
         </div>
       </div>
 
-      <!-- 3. 여행 목적지 & D-DAY -->
+      <!-- 3. 여행 목적지 & 확정 여행 D-DAY (등록/수정/삭제 버튼 포함) -->
       <div class="card-box">
         <div class="card-title">
           <span>✈️ 다음 여행 목적지 & 가고 싶은 곳</span>
         </div>
         
+        <!-- 확정된 여행 D-DAY 배너 -->
         <div style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border: 1px solid #f5d0fe; border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <div style="font-size: 11px; color: #a21caf; font-weight: 700;">🎯 확정된 여행 D-DAY</div>
-            <div style="font-size: 14px; font-weight: 800; color: #86198f; margin-top: 2px;">제주도 가족 여행</div>
+            <div style="font-size: 14px; font-weight: 800; color: #86198f; margin-top: 2px;" id="confirmedTravelTitle">제주도 가족 여행</div>
+            <div style="font-size: 11px; color: #6b7280; margin-top: 1px;" id="confirmedTravelDate">목표일: 2026-11-24</div>
           </div>
-          <div style="background: #db2777; color: white; padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: 800;">D-15</div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <div style="background: #db2777; color: white; padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: 800;" id="confirmedTravelDday">D-15</div>
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <button onclick="openTravelModal()" style="background:#db2777; color:white; border:none; padding:2px 6px; border-radius:4px; font-size:10px; cursor:pointer;">설정</button>
+              <button onclick="deleteConfirmedTravel()" style="background:#fee2e2; color:#dc2626; border:none; padding:2px 6px; border-radius:4px; font-size:10px; cursor:pointer;">삭제</button>
+            </div>
+          </div>
         </div>
 
         <div style="font-size: 12px; font-weight: 600; color: #4b5563; margin-bottom: 6px;">가보고 싶은 여행지 메모 리스트</div>
@@ -656,7 +689,7 @@
           <span>📸 우리 가족 추억 사진첩</span>
           <button onclick="openPhotoModal()" style="background:#fce7f3; color:#be185d; border:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">+ 사진 올리기</button>
         </div>
-        <div style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">가족 여행이나 특별했던 그날의 순간을 올려 함께 공유해보세요!</div>
+        <div style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">가족 여행이나 특별했던 그날의 순간을 올려 함께 공유해보세요! (사진을 누르면 크게 보입니다)</div>
         
         <div id="photoGalleryContainer"></div>
       </div>
@@ -672,6 +705,11 @@
 
   </div>
 
+  <!-- 사진 클릭 시 전체 화면 보기 모달 -->
+  <div id="imageModal" class="image-modal-overlay" onclick="closeImageModal()">
+    <img id="modalFullImage" class="image-modal-content" src="" alt="전체 사진">
+  </div>
+
   <!-- 차량 위치 수정 모달 -->
   <div id="carModal" class="modal-overlay" onclick="handleOutsideClick(event, 'carModal')">
     <div class="modal-content" onclick="event.stopPropagation()">
@@ -681,6 +719,21 @@
       <div class="modal-btns">
         <button class="btn-cancel" onclick="closeModal('carModal')">취소</button>
         <button class="btn-submit" onclick="saveCarLocation()">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 확정 여행 설정 모달 -->
+  <div id="travelModal" class="modal-overlay" onclick="handleOutsideClick(event, 'travelModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3>확정된 여행 설정</h3>
+      <label>여행 이름</label>
+      <input type="text" id="travelTitleInput" placeholder="예: 제주도 가족 여행">
+      <label>여행 날짜 (디데이 목표일)</label>
+      <input type="date" id="travelDateInput">
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="closeModal('travelModal')">취소</button>
+        <button class="btn-submit" onclick="saveConfirmedTravel()">저장</button>
       </div>
     </div>
   </div>
@@ -839,6 +892,10 @@
       { text: "부산 해운대 바다 여행" },
       { text: "강원도 글램핑 캠핑" }
     ];
+    let confirmedTravel = {
+      title: "제주도 가족 여행",
+      date: "2026-11-24"
+    };
     let photoMemoryList = [];
 
     let today = new Date();
@@ -854,15 +911,19 @@
           if (data.carLocation) carLocation = data.carLocation;
           if (data.shoppingList) shoppingList = data.shoppingList;
           if (data.travelWishList) travelWishList = data.travelWishList;
+          if (data.confirmedTravel !== undefined) confirmedTravel = data.confirmedTravel;
           if (data.photoMemoryList) photoMemoryList = data.photoMemoryList;
           if (data.sampleEvents) sampleEvents = data.sampleEvents;
+          if (data.weeklyStudyTemplate) weeklyStudyTemplate = data.weeklyStudyTemplate;
         }
         renderCalendar(currentYear, currentMonth);
         renderCommunicationPage();
+        renderStudyList();
       }).catch((error) => {
         console.log("데이터 로드 실패:", error);
         renderCalendar(currentYear, currentMonth);
         renderCommunicationPage();
+        renderStudyList();
       });
     }
 
@@ -872,8 +933,10 @@
         carLocation: carLocation,
         shoppingList: shoppingList,
         travelWishList: travelWishList,
+        confirmedTravel: confirmedTravel,
         photoMemoryList: photoMemoryList,
-        sampleEvents: sampleEvents
+        sampleEvents: sampleEvents,
+        weeklyStudyTemplate: weeklyStudyTemplate
       }).catch((error) => {
         console.log("데이터 저장 실패:", error);
       });
@@ -979,6 +1042,7 @@
     function renderCommunicationPage() {
       document.getElementById('carLocationText').innerText = carLocation;
 
+      // 1. 가족 메모 렌더링
       const shopContainer = document.getElementById('shoppingListContainer');
       let shopHtml = '';
       if (shoppingList.length === 0) {
@@ -988,18 +1052,43 @@
           let checkedAttr = item.done ? 'checked' : '';
           let spanClass = item.done ? 'completed' : '';
           shopHtml += `
-            <div class="shopping-item-row">
-              <div class="shopping-left">
+            <div class="list-item-row">
+              <div class="list-item-left">
                 <input type="checkbox" ${checkedAttr} onclick="toggleShoppingDone(${index})">
                 <span class="${spanClass}">${item.text}</span>
               </div>
-              <button onclick="deleteShoppingItem(${index})" style="background:#fee2e2; color:#dc2626; border:none; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">삭제</button>
+              <div class="btn-group-sm">
+                <button onclick="editShoppingItem(${index})" style="background:#dbeafe; color:#1d4ed8; border:none; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">수정</button>
+                <button onclick="deleteShoppingItem(${index})" style="background:#fee2e2; color:#dc2626; border:none; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">삭제</button>
+              </div>
             </div>
           `;
         });
       }
       shopContainer.innerHTML = shopHtml;
 
+      // 2. 확정 여행 D-DAY 렌더링
+      if (confirmedTravel && confirmedTravel.title) {
+        document.getElementById('confirmedTravelTitle').innerText = confirmedTravel.title;
+        document.getElementById('confirmedTravelDate').innerText = `목표일: ${confirmedTravel.date}`;
+        
+        // D-DAY 계산
+        const todayDate = new Date();
+        todayDate.setHours(0,0,0,0);
+        const targetDate = new Date(confirmedTravel.date);
+        targetDate.setHours(0,0,0,0);
+        const diffTime = targetDate - todayDate;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        let ddayStr = diffDays === 0 ? "D-DAY" : (diffDays > 0 ? `D-${diffDays}` : `D+${Math.abs(diffDays)}`);
+        document.getElementById('confirmedTravelDday').innerText = ddayStr;
+      } else {
+        document.getElementById('confirmedTravelTitle').innerText = "등록된 확정 여행 없음";
+        document.getElementById('confirmedTravelDate').innerText = "버튼을 눌러 설정하세요";
+        document.getElementById('confirmedTravelDday').innerText = "D-?";
+      }
+
+      // 3. 여행 위시리스트 렌더링 (수정 기능 추가)
       const travelContainer = document.getElementById('travelWishListContainer');
       let travelHtml = '';
       if (travelWishList.length === 0) {
@@ -1009,7 +1098,10 @@
           travelHtml += `
             <div class="travel-memo-item">
               <span>✈️ ${item.text}</span>
-              <button onclick="deleteTravelWishItem(${index})" style="background:#fce7f3; color:#be185d; border:none; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">삭제</button>
+              <div class="btn-group-sm">
+                <button onclick="editTravelWishItem(${index})" style="background:#ffffff; color:#be185d; border:1px solid #f472b6; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">수정</button>
+                <button onclick="deleteTravelWishItem(${index})" style="background:#fce7f3; color:#be185d; border:none; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">삭제</button>
+              </div>
             </div>
           `;
         });
@@ -1026,7 +1118,7 @@
         photoMemoryList.forEach((photo, index) => {
           photoHtml += `
             <div class="photo-card-item">
-              <img src="${photo.url}" class="photo-card-img" alt="추억 사진">
+              <img src="${photo.url}" class="photo-card-img" alt="추억 사진" onclick="openImageModal('${photo.url}')">
               <div class="photo-card-content">
                 <div style="font-size: 14px; font-weight: 700; color: #1f2937; margin-bottom: 6px;">${photo.desc}</div>
                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #9ca3af;">
@@ -1039,6 +1131,15 @@
         });
       }
       photoContainer.innerHTML = photoHtml;
+    }
+
+    function openImageModal(url) {
+      document.getElementById('modalFullImage').src = url;
+      document.getElementById('imageModal').style.display = 'flex';
+    }
+
+    function closeImageModal() {
+      document.getElementById('imageModal').style.display = 'none';
     }
 
     function openCarModal() {
@@ -1056,6 +1157,34 @@
       closeModal('carModal');
       saveDataToFirebase();
       renderCommunicationPage();
+    }
+
+    // 확정된 여행 모달 제어
+    function openTravelModal() {
+      document.getElementById('travelTitleInput').value = confirmedTravel ? confirmedTravel.title : "";
+      document.getElementById('travelDateInput').value = confirmedTravel ? confirmedTravel.date : "";
+      document.getElementById('travelModal').style.display = 'flex';
+    }
+
+    function saveConfirmedTravel() {
+      const titleVal = document.getElementById('travelTitleInput').value.trim();
+      const dateVal = document.getElementById('travelDateInput').value;
+      if (!titleVal || !dateVal) {
+        alert("여행 이름과 날짜를 모두 입력해 주세요!");
+        return;
+      }
+      confirmedTravel = { title: titleVal, date: dateVal };
+      closeModal('travelModal');
+      saveDataToFirebase();
+      renderCommunicationPage();
+    }
+
+    function deleteConfirmedTravel() {
+      if (confirm("확정된 여행 일정을 삭제하시겠습니까?")) {
+        confirmedTravel = null;
+        saveDataToFirebase();
+        renderCommunicationPage();
+      }
     }
 
     function openPhotoModal() {
@@ -1108,6 +1237,19 @@
       renderCommunicationPage();
     }
 
+    function editShoppingItem(index) {
+      const currentText = shoppingList[index].text;
+      const newText = prompt("가족 메모 수정:", currentText);
+      if (newText !== null) {
+        const trimmed = newText.trim();
+        if (trimmed) {
+          shoppingList[index].text = trimmed;
+          saveDataToFirebase();
+          renderCommunicationPage();
+        }
+      }
+    }
+
     function toggleShoppingDone(index) {
       shoppingList[index].done = !shoppingList[index].done;
       saveDataToFirebase();
@@ -1128,6 +1270,19 @@
       input.value = '';
       saveDataToFirebase();
       renderCommunicationPage();
+    }
+
+    function editTravelWishItem(index) {
+      const currentText = travelWishList[index].text;
+      const newText = prompt("가고 싶은 여행지 수정:", currentText);
+      if (newText !== null) {
+        const trimmed = newText.trim();
+        if (trimmed) {
+          travelWishList[index].text = trimmed;
+          saveDataToFirebase();
+          renderCommunicationPage();
+        }
+      }
     }
 
     function deleteTravelWishItem(index) {
@@ -1198,7 +1353,10 @@
                 <input type="checkbox" ${checkedAttr} onclick="toggleStudyDone(${dayOfWeek}, ${index})">
                 <span class="${spanClass}">${item.text}</span>
               </div>
-              <button class="btn-del" style="padding:3px 6px; font-size:10px;" onclick="deleteStudyItem(${dayOfWeek}, ${index})">삭제</button>
+              <div class="btn-group-sm">
+                <button onclick="editStudyItem(${dayOfWeek}, ${index})" style="background:#dbeafe; color:#1d4ed8; border:none; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">수정</button>
+                <button class="btn-del" style="padding:3px 6px; font-size:10px;" onclick="deleteStudyItem(${dayOfWeek}, ${index})">삭제</button>
+              </div>
             </div>
           `;
         });
@@ -1230,6 +1388,19 @@
       closeModal('studyAddModal');
       saveDataToFirebase();
       renderStudyList();
+    }
+
+    function editStudyItem(dayOfWeek, index) {
+      const currentText = weeklyStudyTemplate[dayOfWeek][index].text;
+      const newText = prompt("재현 공부 일정 수정:", currentText);
+      if (newText !== null) {
+        const trimmed = newText.trim();
+        if (trimmed) {
+          weeklyStudyTemplate[dayOfWeek][index].text = trimmed;
+          saveDataToFirebase();
+          renderStudyList();
+        }
+      }
     }
 
     function deleteStudyItem(dayOfWeek, index) {
