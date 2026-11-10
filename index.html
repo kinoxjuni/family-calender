@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>우리 가족 스케줄 & 소통 공간</title>
+  <title>우리 가족 소통 & 스케줄 공간</title>
   
   <!-- Firebase SDK 로드 -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -436,7 +436,6 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
-    /* 1:1 정사각형 비율 프레임 적용 */
     .photo-wrapper {
       width: 100%;
       aspect-ratio: 1 / 1;
@@ -565,7 +564,7 @@
 <body>
 
   <header>
-    <h1 id="headerTitle">가족 스케줄</h1>
+    <h1 id="headerTitle">가족 소통 공간</h1>
     <div class="user-profile">
       <span id="userName">아빠</span>
       <span id="userRoleBadge" class="role-badge role-admin">작성 가능</span>
@@ -574,65 +573,8 @@
 
   <div class="container" id="mainContainer">
 
-    <!-- [페이지 0] 메인 캘린더 화면 -->
+    <!-- [페이지 0] 가족 소통 공간 (메인 1번) -->
     <div id="page0" class="page-section" style="display: block;">
-      <div class="role-toggle-bar">
-        <span>👤 현재 접속자 테스트:</span>
-        <select id="userSelect" onchange="changeUserRole()">
-          <option value="dad">아빠 (작성 권한 O)</option>
-          <option value="mom">엄마 (작성 권한 O)</option>
-          <option value="jaehyun">재현 (조회 전용)</option>
-          <option value="jaehoon">재훈 (조회 전용)</option>
-        </select>
-      </div>
-
-      <div class="legend-card">
-        <div class="legend-item"><div class="color-dot dot-dad"></div>아빠</div>
-        <div class="legend-item"><div class="color-dot dot-mom"></div>엄마</div>
-        <div class="legend-item"><div class="color-dot dot-jaehyun"></div>재현</div>
-        <div class="legend-item"><div class="color-dot dot-jaehoon"></div>재훈</div>
-      </div>
-
-      <div class="calendar-card">
-        <div class="calendar-header">
-          <button class="nav-btn" onclick="changeMonth(-1)">&lt; 이전</button>
-          <h2 id="calendarTitle">2026년 11월</h2>
-          <button class="nav-btn" onclick="changeMonth(1)">다음 &gt;</button>
-        </div>
-
-        <div class="calendar-grid">
-          <div class="day-name sun">일</div>
-          <div class="day-name">월</div>
-          <div class="day-name">화</div>
-          <div class="day-name">수</div>
-          <div class="day-name">목</div>
-          <div class="day-name">금</div>
-          <div class="day-name sat">토</div>
-        </div>
-        <div id="calendarDays" class="calendar-grid" style="margin-top: 4px;"></div>
-      </div>
-
-      <div class="inline-action-area">
-        <button id="addBtn" class="add-event-btn" onclick="openAddModal()">+ 새 일정 등록하기</button>
-      </div>
-    </div>
-
-    <!-- [페이지 1] 아들 공부 화면 -->
-    <div id="page1" class="page-section">
-      <div id="weekBar" class="week-bar"></div>
-      
-      <div class="card-box">
-        <h3 id="studyDateTitle" class="card-title">아들 공부 스케줄</h3>
-        <div id="studyListContainer"></div>
-      </div>
-
-      <div style="padding: 0 4px; margin-top: 10px;">
-        <button class="add-event-btn" onclick="openStudyAddModal()">+ 일정 추가하기</button>
-      </div>
-    </div>
-
-    <!-- [페이지 2] 가족 소통 공간 -->
-    <div id="page2" class="page-section">
       
       <!-- 1. 자동차 위치 -->
       <div class="card-box">
@@ -691,7 +633,64 @@
 
     </div>
 
-    <!-- [페이지 3] 📸 추억 사진 전용 독립 탭 -->
+    <!-- [페이지 1] 아들 공부 화면 (2번) -->
+    <div id="page1" class="page-section">
+      <div id="weekBar" class="week-bar"></div>
+      
+      <div class="card-box">
+        <h3 id="studyDateTitle" class="card-title">아들 공부 스케줄</h3>
+        <div id="studyListContainer"></div>
+      </div>
+
+      <div style="padding: 0 4px; margin-top: 10px;">
+        <button class="add-event-btn" onclick="openStudyAddModal()">+ 일정 추가하기</button>
+      </div>
+    </div>
+
+    <!-- [페이지 2] 메인 캘린더 화면 (3번) -->
+    <div id="page2" class="page-section">
+      <div class="role-toggle-bar">
+        <span>👤 현재 접속자 테스트:</span>
+        <select id="userSelect" onchange="changeUserRole()">
+          <option value="dad">아빠 (작성 권한 O)</option>
+          <option value="mom">엄마 (작성 권한 O)</option>
+          <option value="jaehyun">재현 (조회 전용)</option>
+          <option value="jaehoon">재훈 (조회 전용)</option>
+        </select>
+      </div>
+
+      <div class="legend-card">
+        <div class="legend-item"><div class="color-dot dot-dad"></div>아빠</div>
+        <div class="legend-item"><div class="color-dot dot-mom"></div>엄마</div>
+        <div class="legend-item"><div class="color-dot dot-jaehyun"></div>재현</div>
+        <div class="legend-item"><div class="color-dot dot-jaehoon"></div>재훈</div>
+      </div>
+
+      <div class="calendar-card">
+        <div class="calendar-header">
+          <button class="nav-btn" onclick="changeMonth(-1)">&lt; 이전</button>
+          <h2 id="calendarTitle">2026년 11월</h2>
+          <button class="nav-btn" onclick="changeMonth(1)">다음 &gt;</button>
+        </div>
+
+        <div class="calendar-grid">
+          <div class="day-name sun">일</div>
+          <div class="day-name">월</div>
+          <div class="day-name">화</div>
+          <div class="day-name">수</div>
+          <div class="day-name">목</div>
+          <div class="day-name">금</div>
+          <div class="day-name sat">토</div>
+        </div>
+        <div id="calendarDays" class="calendar-grid" style="margin-top: 4px;"></div>
+      </div>
+
+      <div class="inline-action-area">
+        <button id="addBtn" class="add-event-btn" onclick="openAddModal()">+ 새 일정 등록하기</button>
+      </div>
+    </div>
+
+    <!-- [페이지 3] 📸 추억 사진 전용 독립 탭 (4번) -->
     <div id="page3" class="page-section">
       <div class="card-box">
         <div class="card-title">
@@ -704,11 +703,11 @@
       </div>
     </div>
 
-    <!-- 하단 메뉴바 -->
+    <!-- 하단 메뉴바 (순서 변경됨) -->
     <nav class="bottom-nav">
-      <a class="nav-item active" onclick="switchTab(0)" id="navTab0">📅 캘린더</a>
+      <a class="nav-item active" onclick="switchTab(0)" id="navTab0">💬 가족 소통</a>
       <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들 공부</a>
-      <a class="nav-item" onclick="switchTab(2)" id="navTab2">💬 가족 소통</a>
+      <a class="nav-item" onclick="switchTab(2)" id="navTab2">📅 캘린더</a>
       <a class="nav-item" onclick="switchTab(3)" id="navTab3">📸 추억 사진</a>
     </nav>
 
@@ -1009,13 +1008,13 @@
       document.getElementById(`navTab${tabIndex}`).className = 'nav-item active';
 
       if (tabIndex === 0) {
-        headerTitle.innerText = '가족 스케줄';
+        headerTitle.innerText = '가족 소통 공간';
+        renderCommunicationPage();
       } else if (tabIndex === 1) {
         headerTitle.innerText = '아들 공부 스케줄';
         renderStudyPage();
       } else if (tabIndex === 2) {
-        headerTitle.innerText = '가족 소통 공간';
-        renderCommunicationPage();
+        headerTitle.innerText = '가족 스케줄 (캘린더)';
       } else if (tabIndex === 3) {
         headerTitle.innerText = '우리 가족 추억 사진첩';
         renderPhotoPage();
@@ -1170,7 +1169,6 @@
       document.getElementById('photoModal').style.display = 'flex';
     }
 
-    // 화질 대폭 개선 및 안정적 압축 (고해상도 유지)
     function savePhotoItem() {
       const fileInput = document.getElementById('photoFileInput');
       const descInput = document.getElementById('photoDescInput');
@@ -1183,8 +1181,8 @@
           img.src = e.target.result;
           img.onload = function() {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 1400;  // 해상도 대폭 상향
-            const MAX_HEIGHT = 1400; // 해상도 대폭 상향
+            const MAX_WIDTH = 1400;
+            const MAX_HEIGHT = 1400;
             let width = img.width;
             let height = img.height;
 
@@ -1205,7 +1203,6 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             
-            // 품질을 85%로 높여 선명하게 유지
             const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
 
             const now = new Date();
