@@ -703,7 +703,7 @@
       </div>
     </div>
 
-    <!-- 하단 메뉴바 (순서 변경됨) -->
+    <!-- 하단 메뉴바 -->
     <nav class="bottom-nav">
       <a class="nav-item active" onclick="switchTab(0)" id="navTab0">💬 가족 소통</a>
       <a class="nav-item" onclick="switchTab(1)" id="navTab1">📚 아들 공부</a>
@@ -874,7 +874,30 @@
     }
 
     let sampleEvents = {};
-    let weeklyStudyTemplate = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+    
+    // 요청하신 요일별 고정 공부 스케줄 적용 (0: 일, 1: 월, 2: 화, 3: 수, 4: 목, 5: 금, 6: 토)
+    let weeklyStudyTemplate = {
+      0: [], // 일
+      1: [   // 월
+        { text: "학원 : 미술 15시", done: false },
+        { text: "학원 : 수영 16시", done: false }
+      ],
+      2: [   // 화
+        { text: "방과후 : 배드민턴 15시40분", done: false },
+        { text: "학원 : 축구 16시40분", done: false }
+      ],
+      3: [   // 수
+        { text: "학원 : 수영 16시", done: false }
+      ],
+      4: [   // 목
+        { text: "방과후 : 축구 15시", done: false }
+      ],
+      5: [   // 금
+        { text: "학원 : 수영 16시", done: false }
+      ],
+      6: []  // 토
+    };
+
     let carLocation = "주차 구역 정보 없음";
     let shoppingList = [];
     let travelWishList = [];
@@ -897,6 +920,8 @@
           if (data.confirmedTravel !== undefined) confirmedTravel = data.confirmedTravel;
           if (data.photoMemoryList !== undefined) photoMemoryList = data.photoMemoryList;
           if (data.sampleEvents !== undefined) sampleEvents = data.sampleEvents;
+          
+          // 파이어베이스에 이미 저장된 스케줄이 있다면 그것을 우선 사용, 없으면 초기 고정값 유지
           if (data.weeklyStudyTemplate !== undefined) weeklyStudyTemplate = data.weeklyStudyTemplate;
 
           renderCalendar(currentYear, currentMonth);
