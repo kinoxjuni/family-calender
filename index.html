@@ -875,8 +875,8 @@
 
     let sampleEvents = {};
     
-    // 요청하신 요일별 고정 공부 스케줄 적용 (0: 일, 1: 월, 2: 화, 3: 수, 4: 목, 5: 금, 6: 토)
-    let weeklyStudyTemplate = {
+    // 요일별 고정 공부 스케줄 기본값 정의
+    const defaultWeeklyStudyTemplate = {
       0: [], // 일
       1: [   // 월
         { text: "학원 : 미술 15시", done: false },
@@ -898,6 +898,7 @@
       6: []  // 토
     };
 
+    let weeklyStudyTemplate = JSON.parse(JSON.stringify(defaultWeeklyStudyTemplate));
     let carLocation = "주차 구역 정보 없음";
     let shoppingList = [];
     let travelWishList = [];
@@ -909,7 +910,7 @@
     let currentMonth = today.getMonth();
     let selectedStudyDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-    // Firebase 실시간 리스너
+    // Firebase 실시간 리스너 (데이터가 비어있거나 없으면 강제로 고정 스케줄 주입)
     function listenFirebaseData() {
       db.collection("familyApp").doc("data").onSnapshot((doc) => {
         if (doc.exists) {
@@ -921,13 +922,33 @@
           if (data.photoMemoryList !== undefined) photoMemoryList = data.photoMemoryList;
           if (data.sampleEvents !== undefined) sampleEvents = data.sampleEvents;
           
-          // 파이어베이스에 이미 저장된 스케줄이 있다면 그것을 우선 사용, 없으면 초기 고정값 유지
-          if (data.weeklyStudyTemplate !== undefined) weeklyStudyTemplate = data.weeklyStudyTemplate;
+          // 공부 스케줄이 비어있거나 존재하지 않으면 강제로 고정 스케줄을 적용하고 저장
+          if (data.weeklyStudyTemplate !== undefined) {
+            let hasAnyStudy = false;
+            for(let key in data.weeklyStudyTemplate) {
+              if(data.weeklyStudyTemplate[key] && data.weeklyStudyTemplate[key].length > 0) {
+                hasAnyStudy = true;
+                break;
+              }
+            }
+            if(hasAnyStudy) {
+              weeklyStudyTemplate = data.weeklyStudyTemplate;
+            } else {
+              weeklyStudyTemplate = JSON.parse(JSON.stringify(defaultWeeklyStudyTemplate));
+              saveDataToFirebase();
+            }
+          } else {
+            weeklyStudyTemplate = JSON.parse(JSON.stringify(defaultWeeklyStudyTemplate));
+            saveDataToFirebase();
+          }
 
           renderCalendar(currentYear, currentMonth);
           renderCommunicationPage();
           renderStudyList();
           renderPhotoPage();
+        } else {
+          // 문서가 아예 없을 때 기본값 생성 저장
+          saveDataToFirebase();
         }
       }, (error) => {
         console.log("실시간 데이터 연결 오류:", error);
