@@ -236,12 +236,6 @@
       box-shadow: 0 3px 6px rgba(37, 99, 235, 0.3);
     }
 
-    .add-event-btn:disabled {
-      background-color: #d1d5db;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -815,9 +809,9 @@
   <!-- 공부 일정 추가 모달 -->
   <div id="studyAddModal" class="modal-overlay" onclick="handleOutsideClick(event, 'studyAddModal')">
     <div class="modal-content" onclick="event.stopPropagation()">
-      <h3>아들 공부 일정 추가</h3>
+      <h3>아들 공부/학원 일정 추가</h3>
       <label>내용</label>
-      <input type="text" id="studyInputText" placeholder="">
+      <input type="text" id="studyInputText" placeholder="예: 추가 숙제, 독서 30분 등">
       <div class="modal-btns">
         <button class="btn-cancel" onclick="closeModal('studyAddModal')">취소</button>
         <button class="btn-submit" onclick="saveStudyItem()">추가</button>
@@ -875,11 +869,11 @@
 
     let sampleEvents = {};
     
-    // 요일별 고정 공부 스케줄 기본값 정의
-    const defaultWeeklyStudyTemplate = {
+    // 요일별 기본 고정 스케줄 (월요일 미술 14시, 목요일 방과후 축구 15시40분 반영)
+    const defaultFixedStudyTemplate = {
       0: [], // 일
       1: [   // 월
-        { text: "학원 : 미술 15시", done: false },
+        { text: "학원 : 미술 14시", done: false },
         { text: "학원 : 수영 16시", done: false }
       ],
       2: [   // 화
@@ -890,7 +884,7 @@
         { text: "학원 : 수영 16시", done: false }
       ],
       4: [   // 목
-        { text: "방과후 : 축구 15시", done: false }
+        { text: "방과후 : 축구 15시40분", done: false }
       ],
       5: [   // 금
         { text: "학원 : 수영 16시", done: false }
@@ -898,7 +892,9 @@
       6: []  // 토
     };
 
-    let weeklyStudyTemplate = JSON.parse(JSON.stringify(defaultWeeklyStudyTemplate));
+    let fixedStudyData = {};
+    let customStudyData = {};
+
     let carLocation = "주차 구역 정보 없음";
     let shoppingList = [];
     let travelWishList = [];
@@ -910,7 +906,7 @@
     let currentMonth = today.getMonth();
     let selectedStudyDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-    // Firebase 실시간 리스너 (데이터가 비어있거나 없으면 강제로 고정 스케줄 주입)
+    // Firebase 실시간 리스너
     function listenFirebaseData() {
       db.collection("familyApp").doc("data").onSnapshot((doc) => {
         if (doc.exists) {
@@ -921,24 +917,35 @@
           if (data.confirmedTravel !== undefined) confirmedTravel = data.confirmedTravel;
           if (data.photoMemoryList !== undefined) photoMemoryList = data.photoMemoryList;
           if (data.sampleEvents !== undefined) sampleEvents = data.sampleEvents;
+          if (data.customStudyData !== undefined) customStudyData = data.customStudyData;
           
-          // 공부 스케줄이 비어있거나 존재하지 않으면 강제로 고정 스케줄을 적용하고 저장
-          if (data.weeklyStudyTemplate !== undefined) {
-            let hasAnyStudy = false;
-            for(let key in data.weeklyStudyTemplate) {
-              if(data.weeklyStudyTemplate[key] && data.weeklyStudyTemplate[key].length > 0) {
-                hasAnyStudy = true;
-                break;
-              }
+          if (data.fixedStudyData !== undefined) {
+            fixedStudyData = data.fixedStudyData;
+            let needsSave = false;
+
+            // 기존 파이어베이스 데이터에 이전 시간(미술 15시, 축구 15시)이 남아있을 경우 자동 마이그레이션
+            if (fixedStudyData[1]) {
+              fixedStudyData[1].forEach(item => {
+                if (item.text === "학원 : 미술 15시") {
+                  item.text = "학원 : 미술 14시";
+                  needsSave = true;
+                }
+              });
             }
-            if(hasAnyStudy) {
-              weeklyStudyTemplate = data.weeklyStudyTemplate;
-            } else {
-              weeklyStudyTemplate = JSON.parse(JSON.stringify(defaultWeeklyStudyTemplate));
+            if (fixedStudyData[4]) {
+              fixedStudyData[4].forEach(item => {
+                if (item.text === "방과후 : 축구 15시") {
+                  item.text = "방과후 : 축구 15시40분";
+                  needsSave = true;
+                }
+              });
+            }
+
+            if (needsSave) {
               saveDataToFirebase();
             }
           } else {
-            weeklyStudyTemplate = JSON.parse(JSON.stringify(defaultWeeklyStudyTemplate));
+            fixedStudyData = JSON.parse(JSON.stringify(defaultFixedStudyTemplate));
             saveDataToFirebase();
           }
 
@@ -947,7 +954,7 @@
           renderStudyList();
           renderPhotoPage();
         } else {
-          // 문서가 아예 없을 때 기본값 생성 저장
+          fixedStudyData = JSON.parse(JSON.stringify(defaultFixedStudyTemplate));
           saveDataToFirebase();
         }
       }, (error) => {
@@ -964,7 +971,8 @@
         confirmedTravel: confirmedTravel,
         photoMemoryList: photoMemoryList,
         sampleEvents: sampleEvents,
-        weeklyStudyTemplate: weeklyStudyTemplate
+        fixedStudyData: fixedStudyData,
+        customStudyData: customStudyData
       }).catch((error) => {
         console.log("데이터 저장 실패:", error);
       });
@@ -1380,24 +1388,45 @@
       let dObj = new Date(selectedStudyDate);
       let dayOfWeek = dObj.getDay();
 
-      let items = weeklyStudyTemplate[dayOfWeek] || [];
+      if (!fixedStudyData[dayOfWeek]) {
+        fixedStudyData[dayOfWeek] = JSON.parse(JSON.stringify(defaultFixedStudyTemplate[dayOfWeek] || []));
+      }
+
+      let fixedItems = fixedStudyData[dayOfWeek];
+      let customItems = customStudyData[selectedStudyDate] || [];
+
       let html = '';
 
-      if (items.length === 0) {
+      if (fixedItems.length === 0 && customItems.length === 0) {
         html = `<p style="font-size:12px; color:#6b7280; text-align:center; padding: 15px 0;">등록된 일정이 없습니다.</p>`;
       } else {
-        items.forEach((item, index) => {
+        // 1. 고정 스케줄 (체크박스 포함)
+        fixedItems.forEach((item, index) => {
           let checkedAttr = item.done ? 'checked' : '';
           let spanClass = item.done ? 'completed' : '';
           html += `
             <div class="study-item-row">
               <div class="study-item-left">
-                <input type="checkbox" ${checkedAttr} onclick="toggleStudyDone(${dayOfWeek}, ${index})">
+                <input type="checkbox" ${checkedAttr} onclick="toggleFixedStudyDone(${dayOfWeek}, ${index})">
+                <span class="${spanClass}">${item.text}</span>
+              </div>
+            </div>
+          `;
+        });
+
+        // 2. 추가(커스텀) 스케줄
+        customItems.forEach((item, index) => {
+          let checkedAttr = item.done ? 'checked' : '';
+          let spanClass = item.done ? 'completed' : '';
+          html += `
+            <div class="study-item-row">
+              <div class="study-item-left">
+                <input type="checkbox" ${checkedAttr} onclick="toggleCustomStudyDone('${selectedStudyDate}', ${index})">
                 <span class="${spanClass}">${item.text}</span>
               </div>
               <div class="btn-group-sm">
-                <button onclick="editStudyItem(${dayOfWeek}, ${index})" style="background:#dbeafe; color:#1d4ed8; border:none; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">수정</button>
-                <button class="btn-del" style="padding:3px 6px; font-size:10px;" onclick="deleteStudyItem(${dayOfWeek}, ${index})">삭제</button>
+                <button onclick="editCustomStudyItem('${selectedStudyDate}', ${index})" style="background:#dbeafe; color:#1d4ed8; border:none; padding:3px 6px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">수정</button>
+                <button class="btn-del" style="padding:3px 6px; font-size:10px;" onclick="deleteCustomStudyItem('${selectedStudyDate}', ${index})">삭제</button>
               </div>
             </div>
           `;
@@ -1406,9 +1435,18 @@
       container.innerHTML = html;
     }
 
-    function toggleStudyDone(dayOfWeek, index) {
-      weeklyStudyTemplate[dayOfWeek][index].done = !weeklyStudyTemplate[dayOfWeek][index].done;
-      saveDataToFirebase();
+    function toggleFixedStudyDone(dayOfWeek, index) {
+      if(fixedStudyData[dayOfWeek] && fixedStudyData[dayOfWeek][index]) {
+        fixedStudyData[dayOfWeek][index].done = !fixedStudyData[dayOfWeek][index].done;
+        saveDataToFirebase();
+      }
+    }
+
+    function toggleCustomStudyDone(dateStr, index) {
+      if(customStudyData[dateStr] && customStudyData[dateStr][index]) {
+        customStudyData[dateStr][index].done = !customStudyData[dateStr][index].done;
+        saveDataToFirebase();
+      }
     }
 
     function openStudyAddModal() {
@@ -1422,30 +1460,36 @@
         alert("내용을 입력해 주세요!");
         return;
       }
-      let dObj = new Date(selectedStudyDate);
-      let dayOfWeek = dObj.getDay();
-
-      if(!weeklyStudyTemplate[dayOfWeek]) weeklyStudyTemplate[dayOfWeek] = [];
-      weeklyStudyTemplate[dayOfWeek].push({ text: text, done: false });
+      
+      if (!customStudyData[selectedStudyDate]) {
+        customStudyData[selectedStudyDate] = [];
+      }
+      customStudyData[selectedStudyDate].push({ text: text, done: false });
+      
       closeModal('studyAddModal');
       saveDataToFirebase();
     }
 
-    function editStudyItem(dayOfWeek, index) {
-      const currentText = weeklyStudyTemplate[dayOfWeek][index].text;
-      const newText = prompt("아들 공부 일정 수정:", currentText);
+    function editCustomStudyItem(dateStr, index) {
+      const currentText = customStudyData[dateStr][index].text;
+      const newText = prompt("추가 일정 수정:", currentText);
       if (newText !== null) {
         const trimmed = newText.trim();
         if (trimmed) {
-          weeklyStudyTemplate[dayOfWeek][index].text = trimmed;
+          customStudyData[dateStr][index].text = trimmed;
           saveDataToFirebase();
         }
       }
     }
 
-    function deleteStudyItem(dayOfWeek, index) {
-      weeklyStudyTemplate[dayOfWeek].splice(index, 1);
-      saveDataToFirebase();
+    function deleteCustomStudyItem(dateStr, index) {
+      if (confirm("이 추가 일정을 삭제하시겠습니까?")) {
+        customStudyData[dateStr].splice(index, 1);
+        if (customStudyData[dateStr].length === 0) {
+          delete customStudyData[dateStr];
+        }
+        saveDataToFirebase();
+      }
     }
 
     function openAddModal() {
